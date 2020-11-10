@@ -1,2 +1,3 @@
-# SYSC3010_L2_M_1
-official repo for SYSC3010 L2M1 project Fall 2020
+SYSC 3010 L2 M 1
+
+Official repo for final project
