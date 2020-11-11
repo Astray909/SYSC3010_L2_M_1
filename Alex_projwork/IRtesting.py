@@ -19,7 +19,7 @@ spot1 = IO.setup(spot1.GPIOnum,IO.IN) #GPIO 18 -> IR sensor as input
 while 1:
     if(IO.input(spot1.GPIOnum)==True): #car is far away
         print("No car detected")
-        if(spot1.state == True)
+        if(spot1.state == True):
             lot1.FloorSpots[spot1.FloorID - 1] = lot1.FloorSpots[spot1.FloorID - 1] + 1
         spot1.state = False
         print(lot1.FloorSpots[spot1.FloorID - 1])
@@ -27,7 +27,7 @@ while 1:
 
     if(IO.input(spot1.GPIOnum)==False): #car is close
         print("Car detected")
-        if(spot1.state == False)
+        if(spot1.state == False):
             lot1.FloorSpots[spot1.FloorID - 1] = lot1.FloorSpots[spot1.FloorID - 1] - 1
         spot1.state = True
         print(lot1.FloorSpots[spot1.FloorID - 1])
