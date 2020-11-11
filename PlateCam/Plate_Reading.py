@@ -5,7 +5,7 @@ import json
 from openalpr import Alpr
 
 with picamera.PiCamera() as camera:
-    camera.resolution = (1024, 768)
+    camera.resolution = (2592, 1944)
     camera.start_preview()
     # Camera warm-up time
     time.sleep(2)
