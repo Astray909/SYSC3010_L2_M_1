@@ -1,6 +1,8 @@
 import array as arr
 
 class ParkingLot:
-    LotID = 0
-    FloorSpots = []
+    
+    def __init__(self, LotID, FloorSpots):
+        self.LotID = LotID
+        self.FloorSpots = FloorSpots
 
