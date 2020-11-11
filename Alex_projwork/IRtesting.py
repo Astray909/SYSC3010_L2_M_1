@@ -9,8 +9,8 @@ IO.setwarnings(False) #ignore warnings
 IO.setmode (IO.BCM) #to address pins as ints
 
 lot1 = ParkingLot()
-lot1.LotID = 1
-lot1.FloorSpots = [1, 1, 1] #create a 
+lot1.LotID = 1 #LotID for this garage is '1'
+lot1.FloorSpots = [1, 1, 1] #create a parking lot with 3 floors each with one spot
 
 #Creating a parking spot that is initialized to be empty
 spot1 = ParkingSpot()
@@ -19,13 +19,17 @@ spot1.FloorID = 1
 spot1.SpotID = 1
 spot1.state = False #unoccupied
 
-spot1 = IO.setup(18,IO.IN) #GPIO insertnum -> IR sensor as input
+spot1 = IO.setup(18,IO.IN) #GPIO 18 -> IR sensor as input
 
 while 1:
-    if(IO.input(18)==True): #car is far away
+    if(IO.input(spot1)==True): #car is far away
         print("No car detected")
+        lot1.FloorSpots[spot1.FloorID - 1] = lot1.FloorSpots[spot1.FloorID - 1] + 1
+        print(lot1.FloorSpots[spot1.FloorID - 1])
 
-    if(IO.input(18)==False): #car is close
+    if(IO.input(spot1)==False): #car is close
         print("Car detected")
+        lot1.FloorSpots[spot1.FloorID - 1] = lot1.FloorSpots[spot1.FloorID - 1] - 1
+        print(lot1.FloorSpots[spot1.FloorID - 1])
 
     time.sleep(5)    
