@@ -5,5 +5,5 @@ class ParkingSpot:
     LotID = 0
     FloorID = 0
     state = False
-    GPIOnum = 0
+    GPIOnum = int(0)
 
