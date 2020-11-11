@@ -17,17 +17,18 @@ spot1 = ParkingSpot()
 spot1.LotID = 1
 spot1.FloorID = 1
 spot1.SpotID = 1
+spot1.GPIOnum = 18
 spot1.state = False #unoccupied
 
-spot1 = IO.setup(18,IO.IN) #GPIO 18 -> IR sensor as input
+spot1 = IO.setup(spot1.GPIOnum,IO.IN) #GPIO 18 -> IR sensor as input
 
 while 1:
-    if(IO.input(spot1)==True): #car is far away
+    if(IO.input(spot1.GPIOnum)==True): #car is far away
         print("No car detected")
         lot1.FloorSpots[spot1.FloorID - 1] = lot1.FloorSpots[spot1.FloorID - 1] + 1
         print(lot1.FloorSpots[spot1.FloorID - 1])
 
-    if(IO.input(spot1)==False): #car is close
+    if(IO.input(spot1.GPIOnum)==False): #car is close
         print("Car detected")
         lot1.FloorSpots[spot1.FloorID - 1] = lot1.FloorSpots[spot1.FloorID - 1] - 1
         print(lot1.FloorSpots[spot1.FloorID - 1])
