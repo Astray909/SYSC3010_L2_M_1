@@ -1,8 +1,8 @@
 import urllib2
 import json
 
-READ_API_KEY='T8JSN8K6KFPDN1I1'
-CHANNEL_ID=1172874
+READ_API_KEY='QI5S8B9MQZUNI1YV'
+CHANNEL_ID=1169779
 
 def read():
     conn = urllib2.urlopen("http://api.thingspeak.com/channels/%s/feeds/last.json?api_key=%s" \

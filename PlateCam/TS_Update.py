@@ -3,11 +3,11 @@ import httplib
 import urllib
 import time
 
-labkey = "E1KUNDON3N9T7KG7"
+labkey = "UPJ636UNXXEE2IIG"
 
-def write(plate, time, confidence):
+def write(plate, time):
     while True:
-        params = urllib.urlencode({'field1': plate, 'field2': time, 'field3': confidence, 'key':labkey }) 
+        params = urllib.urlencode({'field1': plate, 'field2': time, 'key':labkey }) 
         headers = {"Content-typZZe": "application/x-www-form-urlencoded","Accept": "text/plain"}
         conn = httplib.HTTPConnection("api.thingspeak.com:80")
         try:
