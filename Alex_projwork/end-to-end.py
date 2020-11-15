@@ -2,7 +2,7 @@ import http.client
 import urllib
 import time
 
-key = "7C8703QIH8OGVOP1" # Put your API Key here write to cam's = UPJ636UNXXEE2IIg
+key = "UPJ636UNXXEE2IIG" # Put your API Key here write to cam's = UPJ636UNXXEE2IIG
 def thingspeak_post():
     while True:
         LotID = 1
@@ -11,7 +11,7 @@ def thingspeak_post():
         SpotID = 1
         state = False
         
-        params = urllib.parse.urlencode({'field1':LotID, 'field2':FloorID, 'field3':FloorSpots, 'field4':SpotID, 'field5':state,'key':key }) 
+        params = urllib.parse.urlencode({'field4':LotID, 'field5':FloorID, 'field6':FloorSpots, 'field7':SpotID, 'field8':state,'key':key }) 
         headers = {"Content-typZZe": "application/x-www-form-urlencoded","Accept": "text/plain"}
         conn = http.client.HTTPConnection("api.thingspeak.com:80")
         try:
