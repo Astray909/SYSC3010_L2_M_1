@@ -7,9 +7,19 @@ import os
 import json
 from datetime import datetime
 
-now = datetime.now()
-current_time = now.strftime("%H:%M:%S")
+def writeToTS():
+    print("yes")
+    now = datetime.now()
+    current_time = now.strftime("%H:%M:%S")
 
-plateNo = read_plate()
+    plateNo = read_plate()
+    write(plateNo, current_time)
+    updateStatus()
 
-write(plateNo, current_time)
+if __name__ == "__main__":
+    while True:
+        gateStatus = read()
+        print(gateStatus)
+        if gateStatus > 0:
+            writeToTS()
+        time.sleep(1)

@@ -5,9 +5,6 @@ import json
 from openalpr import Alpr
 from datetime import datetime
 
-from TS_Update import *
-from TS_Download import *
-
 def read_plate():
     with picamera.PiCamera() as camera:
         camera.resolution = (1024, 768)
