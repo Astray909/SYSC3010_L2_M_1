@@ -19,7 +19,7 @@ with picamera.PiCamera() as camera:
     camera.capture('plate.jpg')
 
     script_dir = os.path.dirname(__file__) #<-- absolute dir the script is in
-    rel_path = "test2.jpg"
+    rel_path = "test.jpg"
     #rel_path = "plate.jpg"
     abs_file_path = os.path.join(script_dir, rel_path)
 
