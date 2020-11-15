@@ -1,4 +1,4 @@
-import http.client
+import httplib
 import urllib
 import time
 
@@ -11,9 +11,9 @@ def thingspeak_post():
         SpotID = 1
         state = False
         
-        params = urllib.parse.urlencode({'field4':LotID, 'field5':FloorID, 'field6':FloorSpots, 'field7':SpotID, 'field8':state,'key':key }) 
+        params = urllib.urlencode({'field4':LotID, 'field5':FloorID, 'field6':FloorSpots, 'field7':SpotID, 'field8':state,'key':key }) 
         headers = {"Content-typZZe": "application/x-www-form-urlencoded","Accept": "text/plain"}
-        conn = http.client.HTTPConnection("api.thingspeak.com:80")
+        conn = httplib.HTTPConnection("api.thingspeak.com:80")
         try:
             conn.request("POST", "/update", params, headers)
             response = conn.getresponse()
