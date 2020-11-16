@@ -13,6 +13,6 @@ if __name__ == "__main__":
         print(gateStatus)
         if gateStatus == "XX":
             exit()
-        if gateStatus != "00" and gateStatus != "11":
+        if gateStatus == "A1" or gateStatus == "B1" or gateStatus == "C1":
             writeToTS()
         time.sleep(1)
