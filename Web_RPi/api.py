@@ -1,4 +1,4 @@
-
+#!/usr/bin/env python3
 import RPi.GPIO as GPIO
 import urllib.request
 import time
@@ -13,10 +13,6 @@ CHANNEL_ID='1169779'
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
-
-dbconnect = sqlite3.connect("parkinglot.db");
-dbconnect.row_factory = sqlite3.Row;
-cursor = dbconnect.cursor();
 
 led1 = 4
 led2 = 17
@@ -41,8 +37,17 @@ while True:
   floor_spots = (data['feeds'][0]['field6'])
   spot_ID = (data['feeds'][0]['field7'])
   state = (data['feeds'][0]['field8'])
+  print (plate_number)
+  print (entry_time)
+  print (door_status)
+  print (lot_ID)
+  print (floor_ID)
+  print (floor_spots)
+  print (spot_ID)
+  print (state)
   GPIO.output(led2,1)
   time.sleep(5)
   GPIO.output(led2,0)
+  time.sleep(5)
 
   TS.close()    
