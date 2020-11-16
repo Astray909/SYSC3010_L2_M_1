@@ -7,19 +7,6 @@ import os
 import json
 from datetime import datetime
 
-def writeToTS():
-    print("yes")
-    now = datetime.now()
-    current_time = now.strftime("%H:%M:%S")
-
-    plateNo = read_plate()
-    
-    if plateNo == 10086:
-        print("No plate found, trying again")
-        return
-    else:
-        write(plateNo, current_time)
-
 if __name__ == "__main__":
     while True:
         gateStatus = read()

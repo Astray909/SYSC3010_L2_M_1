@@ -1,7 +1,14 @@
 import httplib
 import urllib
 import time
+from datetime import datetime
+
 from keys import *
+#from keys2 import *
+
+from TS_Update import *
+from TS_Download import *
+from Plate_Reading import *
 
 WRITE_API_KEY = WRITE_KEY()
 
@@ -49,3 +56,16 @@ def updateStatusto1():
         except:
             print ("connection failed")
         break
+
+def writeToTS():
+    print("yes")
+    now = datetime.now()
+    current_time = now.strftime("%H:%M:%S")
+
+    plateNo = read_plate()
+    
+    if plateNo == 10086:
+        print("No plate found, trying again")
+        return
+    else:
+        write(plateNo, current_time)
