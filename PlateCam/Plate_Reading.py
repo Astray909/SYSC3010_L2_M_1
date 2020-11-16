@@ -25,16 +25,12 @@ def read_plate():
         results = alpr.recognize_file(abs_file_path)
         #print(json.dumps(results, indent = 4))
 
-        plateNo = results["results"][0]["plate"]
-
         try:
+            plateNo = results["results"][0]["plate"]
             print(plateNo)
-        except IndexError:
-            print("No plate found")
-        try:
             print(results["results"][0]["confidence"])
-        except IndexError:
-            print("Please Try Again")
+        except:
+            plateNo = 10086
 
         alpr.unload()
 

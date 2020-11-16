@@ -13,13 +13,17 @@ def writeToTS():
     current_time = now.strftime("%H:%M:%S")
 
     plateNo = read_plate()
-    write(plateNo, current_time)
-    updateStatus()
+    
+    if plateNo == 10086:
+        print("No plate found, trying again")
+        return
+    else:
+        write(plateNo, current_time)
 
 if __name__ == "__main__":
     while True:
         gateStatus = read()
         print(gateStatus)
-        if gateStatus > 0:
+        if gateStatus == "A1" or gateStatus == "B1" or gateStatus == "c1":
             writeToTS()
         time.sleep(1)
