@@ -57,6 +57,21 @@ def updateStatusto1():
             print ("connection failed")
         break
 
+def stopCam():
+    while True:
+        params = urllib.urlencode({'field3': "XX",'key':WRITE_API_KEY }) 
+        headers = {"Content-typZZe": "application/x-www-form-urlencoded","Accept": "text/plain"}
+        conn = httplib.HTTPConnection("api.thingspeak.com:80")
+        try:
+            conn.request("POST", "/update", params, headers)
+            response = conn.getresponse()
+            print (response.status, response.reason)
+            data = response.read()
+            conn.close()
+        except:
+            print ("connection failed")
+        break
+
 def writeToTS():
     print("yes")
     now = datetime.now()
@@ -64,7 +79,7 @@ def writeToTS():
 
     plateNo = read_plate()
     
-    if plateNo == 10086:
+    if plateNo == "error10086":
         print("No plate found, trying again")
         return
     else:

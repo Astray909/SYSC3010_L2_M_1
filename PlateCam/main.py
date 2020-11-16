@@ -11,6 +11,8 @@ if __name__ == "__main__":
     while True:
         gateStatus = read()
         print(gateStatus)
-        if gateStatus == "A1" or gateStatus == "B1" or gateStatus == "c1":
+        if gateStatus == "XX":
+            exit()
+        if gateStatus != "00" and gateStatus != "11":
             writeToTS()
         time.sleep(1)
