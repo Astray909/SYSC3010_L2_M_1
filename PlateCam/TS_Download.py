@@ -1,3 +1,7 @@
+'''
+reads and returns information from TS channel field3, which is used for gate status indication
+'''
+
 import urllib2
 import json
 

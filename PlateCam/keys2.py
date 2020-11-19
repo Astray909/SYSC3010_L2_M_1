@@ -1,3 +1,7 @@
+'''
+Stores all the api keys to the destination TS channel
+'''
+
 def READ_KEY():
     return 'T8JSN8K6KFPDN1I1'
 

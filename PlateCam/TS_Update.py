@@ -1,3 +1,7 @@
+'''
+writes to desired TS channel with plate and timestamp information
+'''
+
 import httplib
 import urllib
 import time
@@ -28,25 +32,25 @@ def writeTS(fieldOne, fieldTwo, fieldThree):
         break
 
 def write(plate, time):
-    writeTS(plate, time, "00")
+    writeTS(plate, time, "00") #writes plate number, time, and stop signal
 
 def updateStatus():
-    writeTS("", "", "00")
+    writeTS("", "", "00") #writes stop signal
 
 def updateStatusto1():
-    writeTS("", "", "A1")
+    writeTS("", "", "A1") #writes start signal
 
 def stopCam():
-    writeTS("", "", "XX")
+    writeTS("", "", "XX") #writes emergency stop signal
 
 def writeToTS():
-    print("yes")
+    #print("Camera On")
     now = datetime.now()
     current_time = now.strftime("%H:%M:%S")
 
     plateNo = read_plate()
     
-    if plateNo == "error10086":
+    if plateNo == "error10086": #check for no plate found error
         print("No plate found, trying again")
         return
     else:
