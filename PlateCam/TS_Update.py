@@ -12,9 +12,9 @@ from Plate_Reading import *
 
 WRITE_API_KEY = WRITE_KEY()
 
-def write(plate, time):
+def writeTS(fieldOne, fieldTwo, fieldThree):
     while True:
-        params = urllib.urlencode({'field1': plate, 'field2': time, 'field3': "00", 'key':WRITE_API_KEY }) 
+        params = urllib.urlencode({'field1': fieldOne, 'field2': fieldTwo, 'field3': fieldThree, 'key':WRITE_API_KEY }) 
         headers = {"Content-typZZe": "application/x-www-form-urlencoded","Accept": "text/plain"}
         conn = httplib.HTTPConnection("api.thingspeak.com:80")
         try:
@@ -26,51 +26,18 @@ def write(plate, time):
         except:
             print ("connection failed")
         break
+
+def write(plate, time):
+    writeTS(plate, time, "00")
 
 def updateStatus():
-    while True:
-        params = urllib.urlencode({'field3': "00",'key':WRITE_API_KEY }) 
-        headers = {"Content-typZZe": "application/x-www-form-urlencoded","Accept": "text/plain"}
-        conn = httplib.HTTPConnection("api.thingspeak.com:80")
-        try:
-            conn.request("POST", "/update", params, headers)
-            response = conn.getresponse()
-            print (response.status, response.reason)
-            data = response.read()
-            conn.close()
-        except:
-            print ("connection failed")
-        break
+    writeTS("", "", "00")
 
 def updateStatusto1():
-    while True:
-        params = urllib.urlencode({'field3': "A1",'key':WRITE_API_KEY }) 
-        headers = {"Content-typZZe": "application/x-www-form-urlencoded","Accept": "text/plain"}
-        conn = httplib.HTTPConnection("api.thingspeak.com:80")
-        try:
-            conn.request("POST", "/update", params, headers)
-            response = conn.getresponse()
-            print (response.status, response.reason)
-            data = response.read()
-            conn.close()
-        except:
-            print ("connection failed")
-        break
+    writeTS("", "", "A1")
 
 def stopCam():
-    while True:
-        params = urllib.urlencode({'field3': "XX",'key':WRITE_API_KEY }) 
-        headers = {"Content-typZZe": "application/x-www-form-urlencoded","Accept": "text/plain"}
-        conn = httplib.HTTPConnection("api.thingspeak.com:80")
-        try:
-            conn.request("POST", "/update", params, headers)
-            response = conn.getresponse()
-            print (response.status, response.reason)
-            data = response.read()
-            conn.close()
-        except:
-            print ("connection failed")
-        break
+    writeTS("", "", "XX")
 
 def writeToTS():
     print("yes")
