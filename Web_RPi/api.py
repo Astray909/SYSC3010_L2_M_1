@@ -71,16 +71,19 @@ while True:
     try:
         response = TS.read()
         data=json.loads(response)
+        
         #Individually checks all entries 
         plate_number = (data['feeds'][0]['field1'])
         entry_time = (data['feeds'][0]['field2'])
         door_status = (data['feeds'][0]['field3'])
+        
         #For the parking entries, I check the feeds list and pull the data from each field
         lot_ID = (data['feeds'][0]['field4'])
         floor_ID = (data['feeds'][0]['field5'])
         floor_spots = (data['feeds'][0]['field6'])
         spot_ID = (data['feeds'][0]['field7'])
         state = (data['feeds'][0]['field8'])
+        
         print (plate_number)
         print (entry_time)
         print (door_status)
