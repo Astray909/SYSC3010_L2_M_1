@@ -19,9 +19,6 @@ led2 = 17
 GPIO.setup(led1,GPIO.OUT)
 GPIO.setup(led2,GPIO.OUT)
 
-#this variable is used to check if the entries in thingspeak are within the 15 second interval
-timebefore = 0
-
 #Initializes connection with database and intializes tables in the database
 dbconnect = sqlite3.connect("parkinglot.db");
 dbconnect.row_factory = sqlite3.Row;
@@ -30,21 +27,31 @@ cursor.execute('''create table IF NOT EXISTS CarDosier (PlateNumber TEXT, EntryT
 cursor.execute('''create table IF NOT EXISTS DoorStatus (GateStatus INTEGER)''');
 cursor.execute('''create table IF NOT EXISTS ParkingSheet (LotID INTEGER, FloorID INTEGER, FloorSpots INTEGER, SpotID INTEGER, Status INTEGER)''');
 
-#pulls the entrytime from thingspeak and breaks down the input into our designated format (e.x. 2020-11-19 21:16:42)
+#pulls the entrytime from thingspeak formatted as (2020-11-20T17:55:49Z)
+#and breaks down the input into our designated format (2020-11-19 21:16:42)
+#due to the creation field not taking into account for timezones, we take off 5 hours to correct the time
 def date_time(dt):
+    #These statements will split the intial given statement
     date = dt.split('T')[0]
     time = dt.split('T')[1]
     time1 = time.split('Z')[0]
-    datetime = date + ' ' + time1
+    
+   #These statements will edit the time to the correct time
+    time2 = time1.split(':')
+    time2[0] = int(time2[0])
+    time2[0] -= 5
+    time2[0] = str(time2[0])
+    time3 = time2[0] + ':' + time2[1] + ':' + time2[2]
+    datetime = date + ' ' + time3
     return datetime
 
 #This function will take the entrytime from the database and compare that time to the current time to calculate how much the person owes
-def compare_time(entrytime):
+def compare_time(time):
     #Gets the current time to compare to excluding microseconds
     x = datetime.datetime.now().replace(microsecond=0)
     
     #Splits the date and time apart and then further seperates to match the python datetime function
-    d1, t1 = entrytime.split(' ')[0], entrytime.split(' ')[1]
+    d1, t1 = time.split(' ')[0], time.split(' ')[1]
     d2 = d1.split('-')
     t2 = t1.split(':')
     
@@ -56,6 +63,7 @@ def compare_time(entrytime):
     
     return difference
 
+#
 def calculate_amount(time):
     amount = round(time*(0.05*(1/60)),2)
     if amount > 20:
@@ -72,32 +80,33 @@ while True:
         response = TS.read()
         data=json.loads(response)
         
-        #Individually checks all entries 
-        plate_number = (data['feeds'][0]['field1'])
-        entry_time = (data['feeds'][0]['field2'])
-        door_status = (data['feeds'][0]['field3'])
+        #checks for any feeds that have come up
+        for i in data['feeds']:
+            
+            #if the input time is between the time interval then the function will go through
+            time_interval = date_time(data['feeds'][i]['created_at'])
+            if (0 <= compare_time(time_interval) <= 15):
+                
+                #Individually checks all entries 
+                plate_number = (data['feeds'][i]['field1'])
+                entry_time = (data['feeds'][i]['field2'])
+                
+                
+                door_status = (data['feeds'][i]['field3'])
         
-        #For the parking entries, I check the feeds list and pull the data from each field
-        lot_ID = (data['feeds'][0]['field4'])
-        floor_ID = (data['feeds'][0]['field5'])
-        floor_spots = (data['feeds'][0]['field6'])
-        spot_ID = (data['feeds'][0]['field7'])
-        state = (data['feeds'][0]['field8'])
+                #For the parking entries, I check the feeds list and pull the data from each field
+                lot_ID = (data['feeds'][i]['field4'])
+                floor_ID = (data['feeds'][i]['field5'])
+                floor_spots = (data['feeds'][i]['field6'])
+                spot_ID = (data['feeds'][i]['field7'])
+                state = (data['feeds'][i]['field8'])
+                
         
-        print (plate_number)
-        print (entry_time)
-        print (door_status)
-        print (lot_ID)
-        print (floor_ID)
-        print (floor_spots)
-        print (spot_ID)
-        print (state)
         GPIO.output(led2,1)
         time.sleep(5)
         GPIO.output(led2,0)
         time.sleep(5)
 
-        TS.close()
-      
+    TS.close()      
     except:
         print ("connection failed")
