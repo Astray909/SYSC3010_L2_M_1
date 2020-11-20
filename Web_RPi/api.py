@@ -7,12 +7,19 @@ import json
 import threading
 import datetime
 
+#Setting API in order to read from Thingspeak
 READ_API_KEY='QI5S8B9MQZUNI1YV'
 CHANNEL_ID='1169779'
 
+#Setup's the GPIO pins on the Raspberry Pi to interact with the LED's
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
+led1 = 4
+led2 = 17
+GPIO.setup(led1,GPIO.OUT)
+GPIO.setup(led2,GPIO.OUT)
 
+#Initializes connection with database and intializes tables in the database
 dbconnect = sqlite3.connect("parkinglot.db");
 dbconnect.row_factory = sqlite3.Row;
 cursor = dbconnect.cursor();
@@ -20,18 +27,13 @@ cursor.execute('''create table IF NOT EXISTS CarDosier (PlateNumber TEXT, EntryT
 cursor.execute('''create table IF NOT EXISTS DoorStatus (GateStatus INTEGER)''');
 cursor.execute('''create table IF NOT EXISTS ParkingSheet (LotID INTEGER, FloorID INTEGER, FloorSpots INTEGER, SpotID INTEGER, Status INTEGER)''');
 
-led1 = 4
-led2 = 17
-GPIO.setup(led1,GPIO.OUT)
-GPIO.setup(led2,GPIO.OUT)
-
 def date_time(dt):
     date = dt.split('T')[0]
     time = dt.split('T')[1]
     time1 = time.split('Z')[0]
     datetime = date + ' ' + time1
     return datetime
-    
+
 def calculate_amount(entrytime):
     x = datetime.datetime.now().replace(microsecond=0)
     d1, t1 = entrytime.split(' ')[0], entrytime.split(' ')[1]
@@ -40,8 +42,8 @@ def calculate_amount(entrytime):
     full = datetime.datetime(int(d2[0]), int(d2[1]), int(d2[2]), int(t2[0]), int(t2[1]), int(t2[2]))
     y = (x-full).seconds
     amount = round(y*(0.05*(1/60)),2)
-    if amount > 14:
-        amount = 14
+    if amount > 20:
+        amount = 20
     return amount
 
 while True:
@@ -52,9 +54,11 @@ while True:
 
   response = TS.read()
   data=json.loads(response)
+  #Individually checks all entries 
   plate_number = (data['feeds'][0]['field1'])
   entry_time = (data['feeds'][0]['field2'])
   door_status = (data['feeds'][0]['field3'])
+  #For the parking entries, I check the feeds list and pull the data from each field
   lot_ID = (data['feeds'][0]['field4'])
   floor_ID = (data['feeds'][0]['field5'])
   floor_spots = (data['feeds'][0]['field6'])
