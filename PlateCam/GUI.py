@@ -9,7 +9,7 @@ lab = Label(root)
 lab.pack()
 
 def display():
-    plateNo = read()
+    plateNo = readPlate()
     time = datetime.datetime.now().strftime(plateNo)
     lab.config(text=time)
     root.after(1000, display)
