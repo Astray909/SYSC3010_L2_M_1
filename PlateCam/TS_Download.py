@@ -20,3 +20,4 @@ def read():
     data=json.loads(response)
     conn.close()
     return data['field3']
+    
