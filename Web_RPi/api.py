@@ -5,8 +5,7 @@ import time
 import sqlite3
 import json
 import threading
-from pprint import pprint
-
+import datetime
 
 READ_API_KEY='QI5S8B9MQZUNI1YV'
 CHANNEL_ID='1169779'
@@ -14,12 +13,36 @@ CHANNEL_ID='1169779'
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
+dbconnect = sqlite3.connect("parkinglot.db");
+dbconnect.row_factory = sqlite3.Row;
+cursor = dbconnect.cursor();
+cursor.execute('''create table IF NOT EXISTS CarDosier (PlateNumber TEXT, EntryTime TEXT, ExitTime TEXT, hasPaid INTEGER, Amount DOUBLE)''');
+cursor.execute('''create table IF NOT EXISTS DoorStatus (GateStatus INTEGER)''');
+cursor.execute('''create table IF NOT EXISTS ParkingSheet (LotID INTEGER, FloorID INTEGER, FloorSpots INTEGER, SpotID INTEGER, Status INTEGER)''');
+
 led1 = 4
 led2 = 17
-led3 = 27
 GPIO.setup(led1,GPIO.OUT)
 GPIO.setup(led2,GPIO.OUT)
-GPIO.setup(led3,GPIO.OUT)
+
+def date_time(dt):
+    date = dt.split('T')[0]
+    time = dt.split('T')[1]
+    time1 = time.split('Z')[0]
+    datetime = date + ' ' + time1
+    return datetime
+    
+def calculate_amount(entrytime):
+    x = datetime.datetime.now().replace(microsecond=0)
+    d1, t1 = entrytime.split(' ')[0], entrytime.split(' ')[1]
+    d2 = d1.split('-')
+    t2 = t1.split(':')
+    full = datetime.datetime(int(d2[0]), int(d2[1]), int(d2[2]), int(t2[0]), int(t2[1]), int(t2[2]))
+    y = (x-full).seconds
+    amount = round(y*(0.05*(1/60)),2)
+    if amount > 14:
+        amount = 14
+    return amount
 
 while True:
   TS = urllib.request.urlopen("https://api.thingspeak.com/channels/1169779/feeds.json?results=1")
