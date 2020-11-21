@@ -1,15 +1,16 @@
-import datetime
-date = "2020-11-20T15:51:10Z"
-def date_time(dt):
-    date = dt.split('T')[0]
-    time = dt.split('T')[1]
-    time1 = time.split('Z')[0]
-    #These statements will edit the time to the correct time
-    time2 = time1.split(':')
-    time2[0] = int(time2[0])
-    time2[0] -= 5
-    time2[0] = str(time2[0])
-    time3 = time2[0] + ':' + time2[1] + ':' + time2[2]
-    datetime = date + ' ' + time3
-    return datetime
-date1 = date_time(date)
+lst = [[1, 2], [3, 4]]
+
+# Method 1: List Comprehension
+flat_1 = [x for l in lst for x in l]
+
+# Method 2: Unpacking
+flat_2 = [*lst[0], *lst[1]]
+
+# Method 3: Extend Method
+flat_3 = []
+for l in lst:
+    flat_3.extend(l)
+    
+z = 0
+for i in lst:
+    z+=1
