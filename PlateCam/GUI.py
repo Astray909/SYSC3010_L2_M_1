@@ -10,7 +10,10 @@ lab.pack()
 
 def display():
     plateNo = readPlate()
-    time = datetime.datetime.now().strftime(plateNo)
+    try:
+        time = datetime.datetime.now().strftime(plateNo)
+    except:
+        time = datetime.datetime.now().strftime("No Plate Number")
     lab.config(text=time)
     root.after(1000, display)
 
