@@ -134,6 +134,7 @@ while True:
     records = cursor.fetchall()
     for row in records:
         row[4] = calculate_amount(row[2])
+        print(row[4])
         
     #checks for any feeds that have come up
     z = 0
@@ -168,10 +169,10 @@ while True:
             
             z+=1
                         
-        #signals the second LED that the information was correctly stored
-        GPIO.output(led2,1)
-        time.sleep(5)
-        GPIO.output(led2,0)
-        time.sleep(5)
+    #signals the second LED that the information was correctly stored
+    GPIO.output(led2,1)
+    time.sleep(5)
+    GPIO.output(led2,0)
+    time.sleep(5)
 
-    TS.close()      
+    TS.close()
