@@ -17,6 +17,19 @@ class ParkingSpot:
         self.GPIOnum = GPIOnum        
 
 
+def detectCar(ParkingSpot, ParkingLot): #General function to detect and update cars in parking spots
+    if(IO.input(ParkingSpot.self.GPIOnum) == True):
+        if(ParkingSpot.self.state == True):
+            ParkingLot.self.FloorSpots[ParkingSpot.self.FloorID - 1] = ParkingLot.self.FloorSpots[ParkingSpot.self.FloorID - 1] + 1
+        ParkingSpot.self.state = False     
+
+    if(IO.input(ParkingSpot.self.GPIOnum) == False):
+        if(ParkingSpot.self.state == False):
+            ParkingLot.self.FloorSpots[ParkingSpot.self.FloorID - 1] = ParkingLot.self.FloorSpots[ParkingSpot.self.FloorID - 1] - 1
+        ParkingSpot.self.state = True
+
+
+
 IO.setwarnings(False) #ignore warnings
 IO.setmode (IO.BCM) #to address pins as ints
 
@@ -29,6 +42,10 @@ spot1 = ParkingSpot(1, 1, 1, False, 18)
 IO.setup(spot1.GPIOnum,IO.IN) #GPIO 18 -> IR sensor as input
 
 while 1:
+
+    detectCar(spot1, lot1)
+
+    """
     if(IO.input(spot1.GPIOnum)==True): #car is far away
         print("No car detected")
         if(spot1.state == True):
@@ -44,5 +61,5 @@ while 1:
         spot1.state = True
         print(lot1.FloorSpots[spot1.FloorID - 1])
         print(spot1.state)
-
+"""
     time.sleep(5)    
