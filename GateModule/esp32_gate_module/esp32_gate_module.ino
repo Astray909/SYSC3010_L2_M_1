@@ -1,8 +1,26 @@
+/*///////////////////////////////////////////////////////////////////////////////
+ * Author: Ezra Pierce
+ * Course: SYSC 3010 (Fall 2020)
+ * 
+ * Code written for Gate Module of a parking lot monitoring system. Code is written using Arduino libraries
+ * is running on a ESP32 Microcontroller. Main funcitonalities are:
+ * 
+ * - Check if there is a car at the gate via a sonar sensor
+ * - Write to Thingspeak when there is a car
+ * - Wait for confirmation via thingspeak to open gate
+ * - Be able to run tests for all components, triggered by a button press
+ * 
+ *//////////////////////////////////////////////////////////////////////////////
+
+
+// INCLUDE STATEMENTS
 #include "WiFi.h"
 #include "ArduinoJson.h"
 #include <Stepper.h>
 #include <HTTPClient.h>
 
+
+// MACRO DEFINITIONS
 #define TEST_PIN 19
 #define TEST_DISTANCE 10
 #define MOTOR1 13
@@ -17,40 +35,56 @@
 #define TEST3_PIN 33
 #define TEST4_PIN 32
 #define SSID "triplex09"
-#define PWD "thisbetterwork2016"
+#define PWD 00
 #define SERVER "api.thingspeak.com"
 #define THRESHOLD 200
 #define TEST_LED 2
-// #define LOT_ID "A"
 
-volatile long duration;
-volatile int distance;
-volatile bool testRequested = false;
+// CONSTANTS
 String LOT_ID = "A";
 String WRITE_API_KEY = "UPJ636UNXXEE2IIG";
 String READ_API_KEY = "QI5S8B9MQZUNI1YV";
 String TEST_WRITE_API_KEY = "5BI02IP39MVTTD40";
 String TEST_READ_API_KEY = "6ABTK950PX9IKSW9";
 static String CAR_IS_PRESENT = LOT_ID + "1";
+
+// GLOBAL STATE
+volatile bool testRequested = false;
 int httpResponseCode;
 bool confirmationReceived;
 
+// GLOBAL WIFI CLIENT
 WiFiClient client;
 
-void readFromSonar() {
+/*
+ * Function to read distance from ultrasonic sensor.
+ * Takes no arguments.
+ * Returns integer.
+ */
+
+int readFromSonar() {
+  int distance;
+  long distance;
+  // Trigger sensor, according to read protocol
   digitalWrite(TRIG_PIN, LOW);
   delayMicroseconds(2);
-  // Trigger sensor
   digitalWrite(TRIG_PIN, HIGH);
   delayMicroseconds(10);
   digitalWrite(TRIG_PIN, LOW);
   // read response
   duration = pulseIn(ECHO_PIN, HIGH);
   distance = duration * 0.034 / 2;
+  return distance
 }
 
+/*
+ * Function to turn stepper motor.
+ * Takes integer argument 'steps', denoting which direction and how far to turn
+ * returns nothing
+ */
+
 void spinMotor(int steps) {
-  
+  // Negative steps turns counter-clockwise, positive turns clockwise
   if(steps > 0){
     Stepper motor = Stepper(64, MOTOR1, MOTOR2, MOTOR3, MOTOR4);
     motor.setSpeed(MOTOR_SPEED);
@@ -63,20 +97,22 @@ void spinMotor(int steps) {
   Serial.println("Motor done.");
 }
 
+/*
+ * Interrupt to alert program that a test has been requested.
+ */
 void IRAM_ATTR test_isr() {
   testRequested = true;
   Serial.println("ISR");
 }
 
-
-
+/*
+ * Setup function, runs once on boot.
+ */
 void setup() {
+
+  // Configuring GPIO pins
   pinMode(TEST_LED, OUTPUT);
-
-  // Set up testing isr
   pinMode(TEST_PIN, INPUT_PULLUP);
-  attachInterrupt(TEST_PIN, test_isr, FALLING);
-
   pinMode(TEST1_PIN, OUTPUT);
   pinMode(TEST2_PIN, OUTPUT);
   pinMode(TEST3_PIN, OUTPUT);
@@ -85,11 +121,16 @@ void setup() {
   digitalWrite(TEST2_PIN, LOW);
   digitalWrite(TEST3_PIN, LOW);
   digitalWrite(TEST4_PIN, LOW);
-
   pinMode(TRIG_PIN, OUTPUT);
   pinMode(ECHO_PIN, INPUT);
+  
+  // Configuring test ISR
+  attachInterrupt(TEST_PIN, test_isr, FALLING);
+  
+  // Open serial communication
   Serial.begin(115200);
-
+  
+  // Configure network
   WiFi.begin(SSID, PWD);
   while (WiFi.status() != WL_CONNECTED)
   {
@@ -113,11 +154,12 @@ void test() {
    * Test must be setup with motor 10cm away from sonar module.
    */
   bool sonarPassed, motorPassed, writePassed, readPassed;
+  int distance;
   
   digitalWrite(TEST_LED, HIGH);
   
-  // Test One
-  readFromSonar();
+  // Test One - Sonar
+  distance = readFromSonar();
   if ((TEST_DISTANCE - 1) < distance < TEST_DISTANCE + 1) {
     Serial.println("Sonar test passed.");
     digitalWrite(TEST1_PIN, HIGH);
@@ -127,9 +169,9 @@ void test() {
     sonarPassed = false;
   }
   
-  // Test Two
+  // Test Two - Motor
   spinMotor(200);
-  readFromSonar();
+  distance = readFromSonar();
   if ( distance > TEST_DISTANCE + 1) {
     Serial.println("Motor test passed.");
     digitalWrite(TEST2_PIN, HIGH);
@@ -169,14 +211,15 @@ void test() {
     readPassed = false;
   }
 
+  // Keep LEDs on for 10 seconds
   delay(10000);
   digitalWrite(TEST1_PIN, LOW);
   digitalWrite(TEST2_PIN, LOW);
   digitalWrite(TEST3_PIN, LOW);
   digitalWrite(TEST4_PIN, LOW);
 
+  // Converting 4 values to 4bit number and writing to thingspeak
   int value = (int(sonarPassed) << 0) | (int(motorPassed) << 1) | (int(writePassed) << 2) | (int(readPassed) << 3);
-  // Serial.println(value);
   String fieldValue = "&field3=" + String(value);
   writeToThingspeak(TEST_WRITE_API_KEY, fieldValue);
 
@@ -184,12 +227,16 @@ void test() {
   testRequested = false;
 }
 
+/*
+ * Writes to thingspeak channel.
+ * Takes api key and field value as arguments
+ * returs HTTP response
+ */
+
 int writeToThingspeak(String apiKey, String fieldValue) {
   HTTPClient http;
   String writeServerPath = "http://api.thingspeak.com/update?api_key=" + apiKey;
   http.begin(writeServerPath.c_str());
-  // String value = "&field3=A1";
-  // String value = "&field3=" + CAR_IS_PRESENT;
   httpResponseCode = http.POST(fieldValue);
   Serial.println(httpResponseCode);
   http.end();
@@ -197,61 +244,40 @@ int writeToThingspeak(String apiKey, String fieldValue) {
 }
 
 
+// Infinite loop
 void loop() {
+  int distance;
   if (testRequested) {
     test();
   }
-
   confirmationReceived = false;
-  /*// Clears the trigPin
-    digitalWrite(TRIG_PIN, LOW);
-    delayMicroseconds(2);
-    // Trigger sensor
-    digitalWrite(TRIG_PIN, HIGH);
-    delayMicroseconds(10);
-    digitalWrite(TRIG_PIN, LOW);
-    // read response
-    duration = pulseIn(ECHO_PIN, HIGH);
-    distance = duration * 0.034 / 2;
-  */
-  readFromSonar();
-  // Serial.print("Distance: ");
-  Serial.println(distance);
+  distance = readFromSonar();
 
   // Check if car is there
   if (distance > THRESHOLD) {
     // Write to Thingspeak channel
-    /*
-      HTTPClient http;
-      String writeServerPath = "http://api.thingspeak.com/update?api_key=" + WRITE_API_KEY;
-      http.begin(writeServerPath.c_str());
-      // String value = "&field3=A1";
-      String value = "&field3=" + CAR_IS_PRESENT;
-      httpResponseCode = http.POST(value);
-      Serial.println(httpResponseCode);
-      http.end();
-    */
     httpResponseCode = writeToThingspeak(WRITE_API_KEY, "&field3=A1");
-
-    // Wait for reply
+    // Connect to THingspeak
     HTTPClient http;
     String serverPath = "http://api.thingspeak.com/channels/1169779/fields/3/last.json?api_key=" + READ_API_KEY;
     http.begin(serverPath.c_str());
+    // Wait for reply
     while (!confirmationReceived) {
       httpResponseCode = http.GET();
+      // Check for errors
       if (httpResponseCode < 400) {
-        Serial.println("Read from Thingspeak:");
         String payload = http.getString();
+        Serial.println("Read from Thingspeak:");
         Serial.println(payload);
         StaticJsonDocument<300> JSONObj;
         DeserializationError err = deserializeJson(JSONObj, payload);
+        // Check for errors
         if (err) {
           Serial.println("Failed to parse.");
           Serial.println(err.c_str());
         } else {
-          String field = JSONObj["field3"];
+          String field = JSONObj["field3"]; // Read field containing pertinent info
           Serial.println(field);
-          // ADD TIMEOUT
           if (field.equals("00") || field.equals("0")) {
             Serial.println("Car confirmed, opening gate.");
             spinMotor(100);
