@@ -35,7 +35,7 @@ cursor.execute('''
 
 #special field to enable requests
 cursor.execute('''
-    CREATE TABLE IF NOT EXISTS DoorStatus (GateStatus INTEGER)''');
+    CREATE TABLE IF NOT EXISTS DoorStatus (GateStatus TEXT)''');
 
 #setups up the parking management table and ensures null values aren't added and are not duplicates
 cursor.execute('''
