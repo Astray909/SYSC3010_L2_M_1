@@ -17,7 +17,7 @@ def detectCar(ParkingSpot, ParkingLot): #General function to detect and update c
             thingspeak_post(ParkingLot.LotID, ParkingSpot.FloorID, ParkingLot.FloorSpots[ParkingSpot.FloorID - 1], ParkingSpot.SpotID, ParkingSpot.state, "UPJ636UNXXEE2IIG")    
 
 
-    if(IO.input(ParkingSpot.GPIOnum) == False):
+    elif(IO.input(ParkingSpot.GPIOnum) == False):
         if(ParkingSpot.state == False):
             ParkingLot.FloorSpots[ParkingSpot.FloorID - 1] = ParkingLot.FloorSpots[ParkingSpot.FloorID - 1] - 1
             ParkingSpot.state = True    
