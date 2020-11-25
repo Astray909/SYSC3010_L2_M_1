@@ -56,6 +56,9 @@ while(1):
 
     # detectCar funcs with the spots
     detectCar(spot1, lot1)
+
+    time.sleep(0.01)
+    
     detectCar(spot2, lot1)
 
     time.sleep(5) # update every 5 s
