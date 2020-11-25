@@ -34,6 +34,9 @@ spotList = []
 spot1 = ParkingSpot(1, 1, 1, False, 18)
 spotList.append(spot1)
 
+spot2 = ParkingSpot(1, 2, 1, False, 23)
+spotList.append(spot2)
+
 # Init LotSpots here
 
 lot1spots = [3, 3, 3]
@@ -53,6 +56,7 @@ while(1):
 
     # detectCar funcs with the spots
     detectCar(spot1, lot1)
+    detectCar(spot2, lot1)
 
     time.sleep(5) # update every 5 s
     
