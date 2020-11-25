@@ -32,7 +32,7 @@ spotList = []
 # Instantiate spots here
 
 spot1 = ParkingSpot(1, 1, 1, False, 18)
-spotList.append(spot1.GPIOnum)
+spotList.append(spot1)
 
 # Init LotSpots here
 
