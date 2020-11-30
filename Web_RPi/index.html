@@ -11,14 +11,9 @@
 	
 	<p>Click this Button to Search for your Car by typing in your Licence Plate (Case Sensitive).</p>
 
-	<button onclick="myFunction()">Search</button>
-
-	<script>
-	function myFunction() {
-		var x = document.createElement("INPUT");
-		x.setAttribute("type", "search");
-		document.body.appendChild(x);
-	}
-	</script>
+	<form action="search.php" method="post">
+	Licence Number: <input type="text" name="Licence Number">
+	<input type="submit">
+	</form>
 	</body>
 </html>

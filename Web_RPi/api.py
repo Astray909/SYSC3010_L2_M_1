@@ -84,15 +84,15 @@ def date_time(dt):
 
 #function to apppend a date to the entry time assuming that then entry is the day of
 def date_entry(dtime):
-    time1 = dtime.split(':')
-    x = datetime.datetime.combine(datetime.date.now(),
-                                  datetime.time(time1[0], time1[1], time1[2]))
-    return x
+    split_time = dtime.split(':')
+    fixed_time = datetime.datetime.combine(datetime.date.now(),
+                                  datetime.time(split_time[0], split_time[1], split_time[2]))
+    return fixed_time
 
 #This function will take the entrytime from the database and compare that time to the current time to calculate how much the person owes
 def compare_time(time):
     #Gets the current time to compare to excluding microseconds
-    x = datetime.datetime.now().replace(microsecond=0)
+    current = datetime.datetime.now().replace(microsecond=0)
     
     #Splits the date and time apart and then further seperates to match the python datetime function
     d1, t1 = time.split(' ')[0], time.split(' ')[1]
@@ -103,7 +103,7 @@ def compare_time(time):
     full = datetime.datetime(int(d2[0]), int(d2[1]), int(d2[2]), int(t2[0]), int(t2[1]), int(t2[2]))
     
     #returns the difference in seconds
-    difference = (x-full).seconds
+    difference = (current-full).seconds
     return difference
 
 #calculates the amount that a customer owes for their parking space, the inserted value is alwasys a car's entry time
@@ -111,10 +111,10 @@ def compare_time(time):
 def calculate_amount(time):
     
     #sends the entry time to the compare_time function to calculate the seconds a car has been parked
-    x = compare_time(time)
+    spent_time = compare_time(time)
     
     #applies the second based rate
-    amount = round(x*(0.05*(1/60)),2)
+    amount = round(spent_time*(0.05*(1/60)),2)
     if amount >= 20:
         amount = 20
     return amount
@@ -122,9 +122,9 @@ def calculate_amount(time):
 while True:
     TS = urllib.request.urlopen("https://api.thingspeak.com/channels/1169779/feeds.json?results=1")
     #signals LED that the connection was successful
-    GPIO.output(led1, 1)
+    GPIO.output(led1, GPIO.HIGH)
     time.sleep(5)
-    GPIO.output(led1, 0)
+    GPIO.output(led1, GPIO.LOW)
 
     response = TS.read()
     data=json.loads(response)
@@ -137,18 +137,19 @@ while True:
         print(row[4])
         
     #checks for any feeds that have come up
-    z = 0
+    index = 0
     for i in range(len(data['feeds'])):
             
         #if the input time is between the time interval then the function will go through
-        creation_time = (data['feeds'][z]['created_at'])
+        creation_time = (data['feeds'][index]['created_at'])
         time_interval = date_time(creation_time)
         interval = compare_time(time_interval)
+        #this statement checks if the last few entry points fall within the 15 second window so we can track any new information
         if (0 <= interval <= 15):
                 
             #Individually checks all entries 
-            plate_number = (data['feeds'][z]['field1'])
-            entry_time = (data['feeds'][z]['field2'])
+            plate_number = (data['feeds'][index]['field1'])
+            entry_time = (data['feeds'][index]['field2'])
             
             #inserts new car into database
             cursor.execute('''insert into CarDosier (PlateNumber, EntryTime, hasPaid) values (%s, %s, 0)'''
@@ -156,23 +157,23 @@ while True:
             
             
                     
-            door_status = (data['feeds'][z]['field3'])
+            door_status = (data['feeds'][index]['field3'])
         
             #For the parking entries, I check the feeds list and pull the data from each field
-            lot_ID = (data['feeds'][z]['field4'])
-            floor_ID = (data['feeds'][z]['field5'])
-            floor_spots = (data['feeds'][z]['field6'])
-            spot_ID = (data['feeds'][z]['field7'])
-            state = (data['feeds'][z]['field8'])
+            lot_ID = (data['feeds'][index]['field4'])
+            floor_ID = (data['feeds'][index]['field5'])
+            floor_spots = (data['feeds'][index]['field6'])
+            spot_ID = (data['feeds'][index]['field7'])
+            state = (data['feeds'][index]['field8'])
             cursor.execute('''insert into ParkingSheet (LotID, FloorID, FloorSpots, SpotID, Status) values (%s, %s, %s, %s, %s)'''
                     % (lot_ID, floor_ID, floor_spots, spot_ID, state));
             
-            z+=1
+            index+=1
                         
     #signals the second LED that the information was correctly stored
-    GPIO.output(led2,1)
+    GPIO.output(led2,GPIO.HIGH)
     time.sleep(5)
-    GPIO.output(led2,0)
+    GPIO.output(led2, GPIO.LOW)
     time.sleep(5)
 
     TS.close()
