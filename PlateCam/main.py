@@ -12,6 +12,8 @@ import os
 import json
 from datetime import datetime
 
+import unicodedata
+
 sense = SenseHat()
 
 NONE = [
@@ -31,7 +33,7 @@ if __name__ == "__main__":
         print(gateStatus)
         if gateStatus == "XX":
             exit()
-        if gateStatus == "A1" or gateStatus == "B1" or gateStatus == "C1":
+        if gateStatus.isalnum() and gateStatus!= "00" and gateStatus!= "YES" and gateStatus!= "NO":
             writeToTS()
         time.sleep(1) #sleep timer to compensate for TS update interval
         sense.set_pixels(NONE) #clear sensehat
