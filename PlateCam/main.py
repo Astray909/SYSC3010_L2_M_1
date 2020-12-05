@@ -1,6 +1,6 @@
-'''
+"""
 main program
-'''
+"""
 
 from sense_hat import SenseHat
 from TS_Update import *
@@ -29,11 +29,16 @@ X,X,X,X,X,X,X,X
 
 if __name__ == "__main__":
     while True:
-        gateStatus = read() #constantly poll from TS channel for update
+        gateStatus = read()  # constantly poll from TS channel for update
         print(gateStatus)
         if gateStatus == "XX":
             exit()
-        if gateStatus.isalnum() and gateStatus!= "00" and gateStatus!= "YES" and gateStatus!= "NO":
+        if (
+            gateStatus.isalnum()
+            and gateStatus != "00"
+            and gateStatus != "YES"
+            and gateStatus != "NO"
+        ):
             writeToTS()
-        time.sleep(1) #sleep timer to compensate for TS update interval
-        sense.set_pixels(NONE) #clear sensehat
+        time.sleep(1)  # sleep timer to compensate for TS update interval
+        sense.set_pixels(NONE)  # clear sensehat
