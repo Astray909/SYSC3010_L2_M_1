@@ -1,16 +1,37 @@
-lst = [[1, 2], [3, 4]]
+import urllib.request
+import threading
+import json
+import datetime
 
-# Method 1: List Comprehension
-flat_1 = [x for l in lst for x in l]
 
-# Method 2: Unpacking
-flat_2 = [*lst[0], *lst[1]]
+# Define a function that will post on server every 15 Seconds
+WRITE_API_KEY = 'UPJ636UNXXEE2IIG'
+plate = 'L1V3A6'
+time = datetime.datetime.now().replace(microsecond=0)
 
-# Method 3: Extend Method
-flat_3 = []
-for l in lst:
-    flat_3.extend(l)
+def thingspeak_post(fieldOne, fieldTwo):
+    while True:
+        params = urllib.urlencode(
+            {
+                "field1": fieldOne,
+                "field2": fieldTwo,
+                "key": WRITE_API_KEY,
+            }
+        )
+        headers = {
+            "Content-typZZe": "application/x-www-form-urlencoded",
+            "Accept": "text/plain",
+        }
+        conn = httplib.HTTPConnection("api.thingspeak.com:80")
+        try:
+            conn.request("POST", "/update", params, headers)
+            response = conn.getresponse()
+            print(response.status, response.reason)
+            data = response.read()
+            conn.close()
+        except:
+            print("connection failed")
+        break
     
-z = 0
-for i in lst:
-    z+=1
+if __name__ == '__main__':
+    thingspeak_post(plate, time)

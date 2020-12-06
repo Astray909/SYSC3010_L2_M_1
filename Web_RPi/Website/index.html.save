@@ -11,7 +11,7 @@
 	
 	<p>Click this Button to Search for your Car by typing in your Licence Plate (Case Sensitive).</p>
 
-	<form action="search.php" method="post">
+	<script type="text/javascript">
 	Licence Number: <input type="text" name="Licence Number">
 	<input type="submit">
 	</form>

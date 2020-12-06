@@ -1,0 +1,50 @@
+
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>A.P.A. Parking (Advanced Parking Apparatus)</title>
+	</head>
+	<body>
+	<h1>Welcome to the A.P.A.Managed Parking Lot!</h2>
+	<p>On this site you can search up your car, check parking amount, and pay right from your phone!</p>
+	
+	<p>Click this Button to Search for your Car by typing in your Licence Plate (Case Sensitive).</p>
+	
+	<button type="button">Click Me</button>
+
+<p></p>
+
+<script type="text/javascript">
+
+    $(document).ready(function(){
+
+        $("button").click(function(){
+
+
+
+            $.ajax({
+
+                type: 'POST',
+
+                url: 'search.php',
+
+                success: function(data) {
+
+                    alert(data);
+
+                    $("p").text(data);
+
+
+
+                }
+
+            });
+
+   });
+
+});
+
+</script>
+	</body>
+</html>
