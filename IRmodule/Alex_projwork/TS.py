@@ -2,8 +2,6 @@ import httplib
 import urllib
 import time
 
-key = "UPJ636UNXXEE2IIG"
-
 def thingspeak_post(LotID, FloorID, FloorSpots, SpotID, state, key):
     while True:
 

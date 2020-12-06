@@ -50,6 +50,21 @@ lot1 = ParkingLot(1, lot1spots)
 while(len(spotList) > 0):
     spotIO(spotList.pop())
 
+# Displaying lotspots initially
+
+#lot1 spots
+thingspeak_post(lot1.LotID, 1, lot1.FloorSpots[0], 0, False, key)
+time.sleep(1)
+thingspeak_post(lot1.LotID, 2, lot1.FloorSpots[1], 0, False, key)
+time.sleep(1)
+thingspeak_post(lot1.LotID, 3, lot1.FloorSpots[2], 0, False, key)
+time.sleep(1)
+
+#lot2 spots
+
+
+
+
 # polling the spots    
 
 while(1):
@@ -61,5 +76,5 @@ while(1):
 
     detectCar(spot2, lot1)
 
-    time.sleep(1) # update every 5 s
+    time.sleep(1) # update every 1 s
     

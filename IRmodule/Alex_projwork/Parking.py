@@ -2,7 +2,7 @@ import time
 
 class ParkingLot:
     
-    def __init__(self, LotID, FloorSpots):
+    def __init__(self, LotID: int, FloorSpots: list):
         self.LotID = LotID
         self.FloorSpots = FloorSpots
 
@@ -20,7 +20,7 @@ class ParkingLot:
 
 class ParkingSpot:
 
-    def __init__(self, LotID, FloorID, SpotID, state, GPIOnum):
+    def __init__(self, LotID: int, FloorID: int, SpotID: int, state: bool, GPIOnum: int):
         self.LotID = LotID
         self.FloorID = FloorID
         self.SpotID = SpotID
