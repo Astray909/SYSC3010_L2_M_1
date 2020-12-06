@@ -44,7 +44,14 @@ cursor.execute('''
     FloorID INTEGER,
     FloorSpots INTEGER,
     SpotID INTEGER,
-    Status INTEGER)''');
+    Status Text)''');
+
+def write_to_TS(field3):
+    URl='https://api.thingspeak.com/update?api_key='
+    KEY='UPJ636UNXXEE2IIG'
+    HEADER='&field3={}'.format(field3)
+    NEW_URL=URl+KEY+HEADER
+    data=urllib.request.urlopen(NEW_URL)
 
 #pulls the entrytime from thingspeak formatted as (2020-11-20T17:55:49Z)
 #and breaks down the input into our designated format (2020-11-19 21:16:42)
@@ -147,28 +154,44 @@ while True:
         #this statement checks if the last few entry points fall within the 15 second window so we can track any new information
         if (0 <= interval <= 15):
             
-            print('Entries are within the timerange')
-                
-            #Individually checks all entries 
-            plate_number = (data['feeds'][index]['field1'])
-            entry_time = date_entry((data['feeds'][index]['field2']))
-            
-            #inserts new car into database
-            cursor.execute("INSERT INTO CarDosier VALUES (%s, %s, ?, 0, ?)"
-                    % (plate_number, entry_time));
-            
-            
-                    
-            door_status = (data['feeds'][index]['field3'])
+            print('Entries are within the time range')
+
+            try:
+                #Individually checks all entries 
+                plate_number = (data['feeds'][index]['field1'])
+                entry_time = date_entry((data['feeds'][index]['field2']))
+                door_status = (data['feeds'][index]['field3'])
+                #inserts new car into database
+                cursor.execute('''INSERT INTO CarDosier VALUES (?, ?, '0', '0', '0')''' % (plate_number, entry_time));
+            except:
+                plate_number = None | ""
+                entry_time = None | ""
+                door_status = None | ""
+
+            if(door_status == "00"):
+                cursor.execute('''SELECT * FROM CarDosier''');
+                for row in cursor:
+                   if(row['PlateNumber'] == plate_number):
+                       if(row['hadPaid'] == '0'):
+                           write_to_TS('NO');
+                       if(row['hadPaid'] == '1'):
+                            write_to_TS('YES');
         
-            #For the parking entries, I check the feeds list and pull the data from each field
-            lot_ID = (data['feeds'][index]['field4'])
-            floor_ID = (data['feeds'][index]['field5'])
-            floor_spots = (data['feeds'][index]['field6'])
-            spot_ID = (data['feeds'][index]['field7'])
-            state = (data['feeds'][index]['field8'])
-            cursor.execute('''insert into ParkingSheet (LotID, FloorID, FloorSpots, SpotID, Status) values (%s, %s, %s, %s, %s)'''
-                    % (lot_ID, floor_ID, floor_spots, spot_ID, state));
+            try:
+                #For the parking entries, I check the feeds list and pull the data from each field
+                lot_ID = (data['feeds'][index]['field4'])
+                floor_ID = (data['feeds'][index]['field5'])
+                floor_spots = (data['feeds'][index]['field6'])
+                spot_ID = (data['feeds'][index]['field7'])
+                state = (data['feeds'][index]['field8'])
+                cursor.execute('''insert into ParkingSheet (LotID, FloorID, FloorSpots, SpotID, Status) VALUES (%s, %s, %s, %s, %s)'''
+                        % (lot_ID, floor_ID, floor_spots, spot_ID, state));
+            except:
+                lot_ID = None | ""
+                floor_ID = None | ""
+                floor_spots = None | ""
+                spot_ID = None | ""
+                state = None | ""
             
             #used in ensuring that the loop checks all entries in the feed
             index+=1
