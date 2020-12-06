@@ -7,7 +7,7 @@ import json
 
 from keys import *
 
-# from keys2 import *
+#from keys2 import *
 
 READ_API_KEY = READ_KEY()
 CHANNEL_ID = ID()
@@ -36,9 +36,7 @@ def readPlate():
     return data["field1"]
 
 
-def redSpots(config):
+def readSpots(config):
+    fieldid = "field" + str(config)
     data = retrieve()
-    if config == 5:
-        return data["field5"]
-    elif config == 6:
-        return data["field6"]
+    return data[fieldid]

@@ -16,10 +16,12 @@ canvas = tk.Canvas(root, height=HEIGHT, width=WIDTH)
 canvas.pack()
 
 def openGate():
-    os.system('python2 closeGate.py')
+    print("wrote YES to field 3, gate will now open")
+    writeTS("", "", "YES")
 
 def closeGate():
-    os.system('python2 openGate.py')
+    print("wrote NO to field 3, gate will now close")
+    writeTS("", "", "NO")
 
 def display():
 
