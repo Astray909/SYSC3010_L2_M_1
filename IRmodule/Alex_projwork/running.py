@@ -28,7 +28,7 @@ def detectCar(ParkingSpot, ParkingLot): #General function to detect and update c
 # IO init
 
 IO.setwarnings(False) #ignore warnings
-IO.setmode(IO.BCM) #to address pins as ints
+IO.setmode(IO.BCM) #to address pins as BCM ints
 spotList = []
 
 # Instantiate spots here
