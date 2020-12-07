@@ -34,12 +34,18 @@ spotList = []
 spot1 = ParkingSpot(1, 1, 1, False, 18)
 spotList.append(spot1)
 
-spot2 = ParkingSpot(1, 2, 1, False, 23)
+spot2 = ParkingSpot(1, 1, 2, False, 23)
 spotList.append(spot2)
+
+spot3 = ParkingSpot(1, 2, 1, False, 24)
+spotList.append(spot3)
+
+spot4 = ParkingSpot(1, 2, 2, False, 4)
+spotList.append(spot4)
 
 # Init LotSpots here
 
-lot1spots = [3, 3, 3]
+lot1spots = [2, 2]
 
 # Instantiate lots
 
@@ -57,13 +63,6 @@ thingspeak_post(lot1.LotID, 1, lot1.FloorSpots[0], 0, False, key)
 time.sleep(1)
 thingspeak_post(lot1.LotID, 2, lot1.FloorSpots[1], 0, False, key)
 time.sleep(1)
-thingspeak_post(lot1.LotID, 3, lot1.FloorSpots[2], 0, False, key)
-time.sleep(1)
-
-#lot2 spots
-
-
-
 
 # polling the spots    
 
@@ -72,9 +71,17 @@ while(1):
     # detectCar funcs with the spots
     detectCar(spot1, lot1)
 
-    time.sleep(1)
+    time.sleep(1) # update every 1 s
 
     detectCar(spot2, lot1)
+
+    time.sleep(1) # update every 1 s
+
+    detectCar(spot3, lot1)
+
+    time.sleep(1) # update every 1 s
+
+    detectCar(spot4, lot1)
 
     time.sleep(1) # update every 1 s
     
