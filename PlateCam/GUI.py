@@ -14,6 +14,8 @@ root = tk.Tk()
 root.title("GUI")
 canvas = tk.Canvas(root, height=HEIGHT, width=WIDTH)
 canvas.pack()
+x=4000
+sys.setrecursionlimit(x)
 
 
 def display(f1N, f2N):
@@ -63,4 +65,4 @@ def display(f1N, f2N):
 
 
 if __name__ == "__main__":
-    display(0, 0)
+    display(0,0)
