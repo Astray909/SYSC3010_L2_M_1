@@ -137,10 +137,16 @@ while True:
     data=json.loads(response)
     
     #updates the amount owed for any cars that are currently parked in the lot
-    #cursor.execute("""SELECT * from CarDosier""")
-    #records = cursor.fetchall()
-    #for row in records:
-        #row[4] = calculate_amount(row[2])
+    try:
+        cursor.execute("""SELECT * from CarDosier""")
+        records = cursor.fetchall()
+        for row in records:
+            update_sum = calculate_amount(row['EntryTime'])
+            ID = row['PlateNumber']
+            cursor.execute('''UPDATE CarDosier Set Amount = ? Where PlateNumber = ?''', (update_sum, ID));
+            dbconnect.commit();
+    except:
+        pass
         
     #checks for any feeds that have come up
     index = 0
@@ -157,31 +163,26 @@ while True:
             
             #Individually checks all entries 
             plate_number = (data['feeds'][index]['field1'])
-            print(plate_number)
             entry_time = (data['feeds'][index]['field2'])
-            print(entry_time)
             door_status = (data['feeds'][index]['field3'])
-            print(door_status)
             
             try:
-                #inserts new car into database
-                cursor.execute('''INSERT INTO CarDosier (PlateNumber, EntryTime, ExitTime, hasPaid, Amount) VALUES (?, ?, '0', 0, 0)''', (plate_number, entry_time));
-                dbconnect.commit();
+                if(plate_number != None or plate_number != ""):
+                    if(entry_time != None or entry_time != ""):
+                        #inserts new car into database
+                        cursor.execute('''INSERT INTO CarDosier (PlateNumber, EntryTime, ExitTime, hasPaid, Amount) VALUES (?, ?, '0', 0, 0)''', (plate_number, entry_time));
+                        dbconnect.commit();
             except:
-                plate_number == None or ""
-                entry_time == None or ""
+                pass
                 
-            try:
+            if(door_status != None or door_status != ""):
                 if(door_status == "00"):
-                    cursor.execute('''SELECT * FROM CarDosier''');
-                for row in cursor:
-                   if(row['PlateNumber'] == plate_number):
-                       if(row['hadPaid'] == '0'):
-                           write_to_TS('NO');
-                       if(row['hadPaid'] == '1'):
+                    for row in cursor:
+                        cursor.execute('''SELECT PlateNumber FROM CarDosier where platenumber=?''', (plate_number));
+                        if(row['hadPaid'] == '0'):
+                            write_to_TS('NO');
+                        if(row['hadPaid'] == '1'):
                             write_to_TS('YES');
-            except:
-                door_status = None or ""
                 
             #For the parking entries, I check the feeds list and pull the data from each field
             lot_ID = (data['feeds'][index]['field4'])
