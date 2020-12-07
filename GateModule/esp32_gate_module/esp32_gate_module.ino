@@ -268,7 +268,7 @@ void loop() {
         Serial.println("Gate override, closing.");
         spinMotor(-2000);
       }
-      writeToThingspeak(WRITE_API_KEY, "&field3=00");
+      //writeToThingspeak(WRITE_API_KEY, "&field3=00");
     }
   }
 
