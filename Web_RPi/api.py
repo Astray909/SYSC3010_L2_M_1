@@ -167,8 +167,8 @@ while True:
             door_status = (data['feeds'][index]['field3'])
             
             try:
-                if(plate_number != None or plate_number != ""):
-                    if(entry_time != None or entry_time != ""):
+                if(plate_number != None and plate_number != ""):
+                    if(entry_time != None and entry_time != ""):
                         #inserts new car into database
                         cursor.execute('''INSERT INTO CarDosier (PlateNumber, EntryTime, ExitTime, hasPaid, Amount) VALUES (?, ?, '0', 0, 0)''', (plate_number, entry_time));
                         dbconnect.commit();
@@ -178,10 +178,20 @@ while True:
             if(door_status != None or door_status != ""):
                 if(door_status == "00"):
                     for row in cursor:
-                        cursor.execute('''SELECT PlateNumber FROM CarDosier where platenumber=?''', (plate_number));
-                        if(row['hadPaid'] == '0'):
-                            write_to_TS('NO');
-                        if(row['hadPaid'] == '1'):
+                        cursor.execute('''SELECT PlateNumber FROM CarDosier where PlateNumber=?''', (plate_number));
+                        if(row['hasPaid'] == '0'):
+                            amount = row['Amount']
+                            print("$"+amount+" is how much you owe")
+                            print("Would you like to pay now?")
+                            answer = input()
+                            if(input == "Y" or input =="y"):
+                                cursor.execute('''UPDATE CarDosier Set hasPaid = 1 WHERE PlateNumber=?''', (plate_number));
+                                print("You've successfully paid for your spot and are ready to exit the lot when ready!")
+                                write_to_TS('YES');
+                            else:
+                                print("It's okay you can pay whenever you're ready later on");
+                                write_to_TS('NO')
+                        if(row['hasPaid'] == '1'):
                             write_to_TS('YES');
                 
             #For the parking entries, I check the feeds list and pull the data from each field
