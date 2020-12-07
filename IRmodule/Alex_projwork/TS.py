@@ -2,8 +2,9 @@ import httplib
 import urllib
 import time
 
+# Function used to create a post on thingspeak when a spot is taken or vacated
 def thingspeak_post(LotID, FloorID, FloorSpots, SpotID, state, key):
-    #while True:
+    
     params = urllib.urlencode({'field4':LotID, 'field5':FloorID, 'field6':FloorSpots, 'field7':SpotID, 'field8':state,'key':key }) 
     headers = {"Content-typZZe": "application/x-www-form-urlencoded","Accept": "text/plain"}
     conn = httplib.HTTPConnection("api.thingspeak.com:80")
@@ -17,4 +18,4 @@ def thingspeak_post(LotID, FloorID, FloorSpots, SpotID, state, key):
         conn.close()
     except:
         print ("connection failed")
-    #break    
+    

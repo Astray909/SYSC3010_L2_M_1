@@ -11,17 +11,13 @@ def spotIO(ParkingSpot):
 
 def detectCar(ParkingSpot, ParkingLot): #General function to detect and update cars in parking spots
     if(IO.input(ParkingSpot.GPIOnum) == True and ParkingSpot.state == True):
-        #if(ParkingSpot.state == True):
         ParkingLot.spotOpened(ParkingSpot)
-        #ParkingLot.FloorSpots[ParkingSpot.FloorID - 1] = ParkingLot.FloorSpots[ParkingSpot.FloorID - 1] + 1
         ParkingSpot.state = False
         thingspeak_post(ParkingLot.LotID, ParkingSpot.FloorID, ParkingLot.FloorSpots[ParkingSpot.FloorID - 1], ParkingSpot.SpotID, ParkingSpot.state, key)    
 
 
     elif(IO.input(ParkingSpot.GPIOnum) == False and ParkingSpot.state == False):
-        #if(ParkingSpot.state == False):
         ParkingLot.spotTaken(ParkingSpot)
-        #ParkingLot.FloorSpots[ParkingSpot.FloorID - 1] = ParkingLot.FloorSpots[ParkingSpot.FloorID - 1] - 1
         ParkingSpot.state = True    
         thingspeak_post(ParkingLot.LotID, ParkingSpot.FloorID, ParkingLot.FloorSpots[ParkingSpot.FloorID - 1], ParkingSpot.SpotID, ParkingSpot.state, key)
 
@@ -73,17 +69,17 @@ while(1):
     # detectCar funcs with the spots
     detectCar(spot1, lot1)
 
-    time.sleep(1) # update every 1 s
+    time.sleep(1) # 1s between thingspeak posts
 
     detectCar(spot2, lot1)
 
-    time.sleep(1) # update every 1 s
+    time.sleep(1) # 1s between thingspeak posts
 
     detectCar(spot3, lot1)
 
-    time.sleep(1) # update every 1 s
+    time.sleep(1) # 1s between thingspeak posts
 
     detectCar(spot4, lot1)
 
-    time.sleep(1) # update every 1 s
+    time.sleep(1) # 1s between thingspeak posts
     
