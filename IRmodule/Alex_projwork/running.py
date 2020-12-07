@@ -65,21 +65,25 @@ time.sleep(1)
 # polling the spots    
 
 while(1):
+    try:
+        # detectCar funcs with the spots
+        detectCar(spot1, lot1)
 
-    # detectCar funcs with the spots
-    detectCar(spot1, lot1)
+        time.sleep(1) # 1s between thingspeak posts
 
-    time.sleep(1) # 1s between thingspeak posts
+        detectCar(spot2, lot1)
 
-    detectCar(spot2, lot1)
+        time.sleep(1) # 1s between thingspeak posts
 
-    time.sleep(1) # 1s between thingspeak posts
+        detectCar(spot3, lot1)
 
-    detectCar(spot3, lot1)
+        time.sleep(1) # 1s between thingspeak posts
 
-    time.sleep(1) # 1s between thingspeak posts
+        detectCar(spot4, lot1)
 
-    detectCar(spot4, lot1)
+        time.sleep(1) # 1s between thingspeak posts
 
-    time.sleep(1) # 1s between thingspeak posts
+    except KeyboardInterrupt:
+        print("Program terminated due to keyboard interrupt")
+        IO.cleanup()
     
