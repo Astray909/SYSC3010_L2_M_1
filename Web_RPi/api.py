@@ -46,6 +46,7 @@ cursor.execute('''
     SpotID INTEGER,
     Status Text)''');
 
+#writes gate codes to the Thingspeak channel
 def write_to_TS(field3):
     URl='https://api.thingspeak.com/update?api_key='
     KEY='UPJ636UNXXEE2IIG'
@@ -123,14 +124,14 @@ def calculate_amount(time):
     #applies the second based rate
     amount = round(spent_time*(0.05*(1/60)),2)
     if amount >= 20:
-        amount = 20
+        amount = 20.00
     return amount
 
 while True:
     TS = urllib.request.urlopen("https://api.thingspeak.com/channels/1169779/feeds.json?results=1")
     #signals LED that the connection was successful
     GPIO.output(led1, GPIO.HIGH)
-    time.sleep(4)
+    time.sleep(5)
     GPIO.output(led1, GPIO.LOW)
 
     response = TS.read()
@@ -159,40 +160,56 @@ while True:
         #this statement checks if the last few entry points fall within the 15 second window so we can track any new information
         if (0 <= interval <= 15):
             
-            print('Entries found')
-            
             #Individually checks all entries 
             plate_number = (data['feeds'][index]['field1'])
             entry_time = (data['feeds'][index]['field2'])
             door_status = (data['feeds'][index]['field3'])
             
+            #this exception block is used for if a car is entering for the first time then these statements will be passed and go into the car entry lines afterwards
+            #if a car is trying to exit and is already logged in the database then these statements will be used
+            try:    
+                #checks if there is a door status code in the Thingspeak channel, specifically for when the car wishes to exit
+                if(door_status != None and door_status != ""):
+                    #checks for specific code as to proct the system to see if someone is exiting or entering
+                    if(door_status == "00"):
+                        cursor.execute('''SELECT * FROM CarDosier''');
+                        for row in cursor:
+                            #searches the database for a car with the matching plate number
+                            if(row['PlateNumber'] == plate_number):
+                                #if the person hasn't paid then we ask if they'd like to pay now and exit the lot
+                                if(row['hasPaid'] == 0):
+                                    amount = str(row['Amount'])
+                                    print("Hello and Welcome to the A.P.A. Managament System! We just found your car on our registry and currently")
+                                    print("$"+amount+" is how much you owe")
+                                   print("Would you like to pay now? [Y/N]")
+                                    answer = input()
+                                    if(answer == "Y" or answer =="y"):
+                                        present = datetime.datetime.now().replace(microsecond=0)
+                                        #update the database to say that the person has paid and the time they exit
+                                        cursor.execute('''UPDATE CarDosier SET hasPaid = 1, ExitTime = ? WHERE PlateNumber=?''', (present, plate_number));
+                                        dbconnect.commit();
+                                        print("You've successfully paid for your spot and are ready to exit the lot when ready!")
+                                        write_to_TS('YES');
+                                    else:
+                                        print("It's okay you can pay whenever you're ready later on");
+                                        write_to_TS('NO')
+                                if(row['hasPaid'] == '1'):
+                                    write_to_TS('YES');
+            except:
+                pass
+                                
+            #use of the exception protocol is to allow the program to continue even if it tries to add a car that has already been registered
             try:
+                #ensures that there are no empty entries being entered into the database
                 if(plate_number != None and plate_number != ""):
                     if(entry_time != None and entry_time != ""):
                         #inserts new car into database
                         cursor.execute('''INSERT INTO CarDosier (PlateNumber, EntryTime, ExitTime, hasPaid, Amount) VALUES (?, ?, '0', 0, 0)''', (plate_number, entry_time));
                         dbconnect.commit();
+                        #prompts the gate to open for the user
+                        write_to_TS('YES')
             except:
                 pass
-                
-            if(door_status != None or door_status != ""):
-                if(door_status == "00"):
-                    for row in cursor:
-                        cursor.execute('''SELECT PlateNumber FROM CarDosier where PlateNumber=?''', (plate_number));
-                        if(row['hasPaid'] == '0'):
-                            amount = row['Amount']
-                            print("$"+amount+" is how much you owe")
-                            print("Would you like to pay now?")
-                            answer = input()
-                            if(input == "Y" or input =="y"):
-                                cursor.execute('''UPDATE CarDosier Set hasPaid = 1 WHERE PlateNumber=?''', (plate_number));
-                                print("You've successfully paid for your spot and are ready to exit the lot when ready!")
-                                write_to_TS('YES');
-                            else:
-                                print("It's okay you can pay whenever you're ready later on");
-                                write_to_TS('NO')
-                        if(row['hasPaid'] == '1'):
-                            write_to_TS('YES');
                 
             #For the parking entries, I check the feeds list and pull the data from each field
             lot_ID = (data['feeds'][index]['field4'])
@@ -206,19 +223,19 @@ while True:
                         (lot_ID, floor_ID, floor_spots, spot_ID, state));
                 dbconnect.commit();
             except:
-                lot_ID = None or ""
-                floor_ID = None or ""
-                floor_spots = None or ""
-                spot_ID = None or ""
-                state = None or ""
+                lot_ID = None and ""
+                floor_ID = None and ""
+                floor_spots = None and ""
+                spot_ID = None and ""
+                state = None and ""
             
             #used in ensuring that the loop checks all entries in the feed
             index+=1
                         
     #signals the second LED that the information was correctly stored
     GPIO.output(led2,GPIO.HIGH)
-    time.sleep(4)
+    time.sleep(5)
     GPIO.output(led2, GPIO.LOW)
-    time.sleep(4)
+    time.sleep(5)
 
     TS.close()
