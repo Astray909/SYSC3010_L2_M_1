@@ -23,7 +23,11 @@ def closeGate():
     print("wrote NO to field 3, gate will now close")
     writeTS("Gate Close Override", "", "NO")
     time.sleep(5)
-    writeTS("", "", "00")
+    writeTS("Gate Close Override", "", "00")
+
+def camOn():
+    print("wrote A1 to field3, camera will now turn on")
+    writeTS("Camera Override", "", "B1")
 
 def display():
 
@@ -45,6 +49,14 @@ def display():
         closeframe, text="Close Gate", font=40, fg="black", command=closeGate
     )
     closebutton.place(relx=0.5, rely=0.5, relwidth=1, relheight=1, anchor="center")
+
+    camframe = tk.Frame(root, bg="#a3881a", bd=5)
+    camframe.place(relx=0.5, rely=0.75, relwidth=0.5, relheight=0.2, anchor="n")
+
+    cambutton = tk.Button(
+        camframe, text="Turn on Camera", font=40, fg="black", command=camOn
+    )
+    cambutton.place(relx=0.5, rely=0.5, relwidth=1, relheight=1, anchor="center")
 
     root.resizable(False, False)
 

@@ -14,7 +14,7 @@ root = tk.Tk()
 root.title("GUI")
 canvas = tk.Canvas(root, height=HEIGHT, width=WIDTH)
 canvas.pack()
-x=4000
+x=40000
 sys.setrecursionlimit(x)
 
 
@@ -33,13 +33,14 @@ def display(f1N, f2N):
     platelabel.place(relx=0.13, rely=0.1, relwidth=0.75, relheight=0.1)
     
     platef = tk.Frame(root, bg="#99beff", bd=5)
-    platef.place(relx=0.5, rely=0.25, relwidth=0.75, relheight=0.1, anchor="n")
+    platef.place(relx=0.5, rely=0.25, relwidth=0.6, relheight=0.1, anchor="n")
 
     label1 = tk.Label(platef, text="Plate Number: ")
     label1.place(relx=0, rely=0, relwidth=0.45, relheight=1)
 
-    label2 = tk.Label(platef, text=readPlate())
-    label2.place(relx=0.5, rely=0, relwidth=0.45, relheight=1)
+    plateNum = readPlate()
+    label2 = tk.Label(platef, text=plateNum)
+    label2.place(relx=0.55, rely=0, relwidth=0.45, relheight=1)
 
     spotsLabel = tk.Label(root, text="Availability information: ")
     spotsLabel.place(relx=0.13, rely=0.4, relwidth=0.75, relheight=0.1)
