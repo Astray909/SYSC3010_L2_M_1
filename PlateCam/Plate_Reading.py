@@ -77,7 +77,7 @@ def read_plate():
 
         script_dir = os.path.dirname(__file__)  # <-- absolute dir the script is in
         rel_path = "test.jpg"  # testing image
-        # rel_path = "plate.jpg"
+        #rel_path = "plate.jpg"
         abs_file_path = os.path.join(
             script_dir, rel_path
         )  # combines file and directory

@@ -181,7 +181,7 @@ while True:
                                     amount = str(row['Amount'])
                                     print("Hello and Welcome to the A.P.A. Managament System! We just found your car on our registry and currently")
                                     print("$"+amount+" is how much you owe")
-                                   print("Would you like to pay now? [Y/N]")
+                                    print("Would you like to pay now? [Y/N]")
                                     answer = input()
                                     if(answer == "Y" or answer =="y"):
                                         present = datetime.datetime.now().replace(microsecond=0)
@@ -219,9 +219,11 @@ while True:
             state = (data['feeds'][index]['field8'])
             
             try:
-                cursor.execute('''insert into ParkingSheet (LotID, FloorID, FloorSpots, SpotID, Status) VALUES (?, ?, ?, ?, ?)''',
-                        (lot_ID, floor_ID, floor_spots, spot_ID, state));
-                dbconnect.commit();
+                #ensures that each entry is not null/None
+                if(lot_ID != None and floor_ID != None and floor_spots != None and spot_ID != None and state != None):
+                    cursor.execute('''INSERT into ParkingSheet (LotID, FloorID, FloorSpots, SpotID, Status) VALUES (?, ?, ?, ?, ?)''',
+                            (lot_ID, floor_ID, floor_spots, spot_ID, state));
+                    dbconnect.commit();
             except:
                 lot_ID = None and ""
                 floor_ID = None and ""
