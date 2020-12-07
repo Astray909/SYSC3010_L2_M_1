@@ -16,17 +16,19 @@ canvas = tk.Canvas(root, height=HEIGHT, width=WIDTH)
 canvas.pack()
 
 def openGate():
-    os.system('python2 closeGate.py')
+    print("wrote YES to field 3, gate will now open")
+    writeTS("Gate Open Override", "", "YES")
 
 def closeGate():
-    os.system('python2 openGate.py')
+    print("wrote NO to field 3, gate will now close")
+    writeTS("Gate Close Override", "", "NO")
 
 def display():
 
     platelabel = tk.Label(root, text="Please choose from the following options: ")
     platelabel.place(relx=0.13, rely=0.1, relwidth=0.75, relheight=0.1)
 
-    openframe = tk.Frame(root, bg="#ff99cc", bd=5)
+    openframe = tk.Frame(root, bg="#a3881a", bd=5)
     openframe.place(relx=0.5, rely=0.25, relwidth=0.5, relheight=0.2, anchor="n")
 
     openbutton = tk.Button(
@@ -34,7 +36,7 @@ def display():
     )
     openbutton.place(relx=0.5, rely=0.5, relwidth=1, relheight=1, anchor="center")
 
-    closeframe = tk.Frame(root, bg="#ff99cc", bd=5)
+    closeframe = tk.Frame(root, bg="#a3881a", bd=5)
     closeframe.place(relx=0.5, rely=0.5, relwidth=0.5, relheight=0.2, anchor="n")
 
     closebutton = tk.Button(

@@ -9,7 +9,7 @@ from datetime import datetime
 
 from keys import *
 
-# from keys2 import *
+#from keys2 import *
 
 from TS_Update import *
 from TS_Download import *
@@ -19,12 +19,22 @@ WRITE_API_KEY = WRITE_KEY()
 
 
 def writeTS(fieldOne, fieldTwo, fieldThree):
+    fieldFour = readSpots(4)
+    fieldFive = readSpots(5)
+    fieldSix = readSpots(6)
+    fieldSeven = readSpots(7)
+    fieldEight = readSpots(8)
     while True:
         params = urllib.urlencode(
             {
                 "field1": fieldOne,
                 "field2": fieldTwo,
                 "field3": fieldThree,
+                "field4": fieldFour,
+                "field5": fieldFive,
+                "field6": fieldSix,
+                "field7": fieldSeven,
+                "field8": fieldEight,
                 "key": WRITE_API_KEY,
             }
         )

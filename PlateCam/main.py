@@ -16,17 +16,6 @@ import unicodedata
 
 sense = SenseHat()
 
-NONE = [
-X,X,X,X,X,X,X,X,
-X,X,X,X,X,X,X,X,
-X,X,X,X,X,X,X,X,
-X,X,X,X,X,X,X,X,
-X,X,X,X,X,X,X,X,
-X,X,X,X,X,X,X,X,
-X,X,X,X,X,X,X,X,
-X,X,X,X,X,X,X,X
-]
-
 if __name__ == "__main__":
     while True:
         gateStatus = read()  # constantly poll from TS channel for update
@@ -34,11 +23,12 @@ if __name__ == "__main__":
         if gateStatus == "XX":
             exit()
         if (
-            gateStatus.isalnum()
+            gateStatus != None
+            and gateStatus.isalnum()
             and gateStatus != "00"
             and gateStatus != "YES"
             and gateStatus != "NO"
         ):
             writeToTS()
         time.sleep(1)  # sleep timer to compensate for TS update interval
-        sense.set_pixels(NONE)  # clear sensehat
+        sense.clear()  # clear sensehat
