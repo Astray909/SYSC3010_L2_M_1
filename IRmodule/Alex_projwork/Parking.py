@@ -10,13 +10,13 @@ class ParkingLot:
         if(self.LotID == ParkingSpot.LotID):
             self.FloorSpots[ParkingSpot.FloorID - 1] -= 1
             
-        return self.FloorSpots[ParkingSpot.FloorID - 1]
+        #return self.FloorSpots[ParkingSpot.FloorID - 1]
 
     def spotOpened(self, ParkingSpot):
         if(self.LotID == ParkingSpot.LotID):
             self.FloorSpots[ParkingSpot.FloorID - 1] += 1
             
-        return self.FloorSpots[ParkingSpot.FloorID - 1]
+        #return self.FloorSpots[ParkingSpot.FloorID - 1]
 
 class ParkingSpot:
 

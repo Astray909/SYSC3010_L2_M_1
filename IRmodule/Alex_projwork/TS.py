@@ -3,7 +3,6 @@ import urllib
 import time
 
 def thingspeak_post(LotID, FloorID, FloorSpots, SpotID, state, key):
-    while True:
 
         params = urllib.urlencode({'field4':LotID, 'field5':FloorID, 'field6':FloorSpots, 'field7':SpotID, 'field8':state,'key':key }) 
         headers = {"Content-typZZe": "application/x-www-form-urlencoded","Accept": "text/plain"}
@@ -19,4 +18,3 @@ def thingspeak_post(LotID, FloorID, FloorSpots, SpotID, state, key):
         except:
             print ("connection failed")
         
-        break

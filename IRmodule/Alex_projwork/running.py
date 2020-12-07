@@ -10,18 +10,20 @@ def spotIO(ParkingSpot):
     IO.setup(ParkingSpot.GPIOnum,IO.IN)
 
 def detectCar(ParkingSpot, ParkingLot): #General function to detect and update cars in parking spots
-    if(IO.input(ParkingSpot.GPIOnum) == True):
-        if(ParkingSpot.state == True):
-            ParkingLot.FloorSpots[ParkingSpot.FloorID - 1] = ParkingLot.FloorSpots[ParkingSpot.FloorID - 1] + 1
-            ParkingSpot.state = False
-            thingspeak_post(ParkingLot.LotID, ParkingSpot.FloorID, ParkingLot.FloorSpots[ParkingSpot.FloorID - 1], ParkingSpot.SpotID, ParkingSpot.state, "UPJ636UNXXEE2IIG")    
+    if(IO.input(ParkingSpot.GPIOnum) == True and ParkingSpot.state == True):
+        #if(ParkingSpot.state == True):
+        ParkingLot.spotOpened(ParkingSpot)
+        #ParkingLot.FloorSpots[ParkingSpot.FloorID - 1] = ParkingLot.FloorSpots[ParkingSpot.FloorID - 1] + 1
+        ParkingSpot.state = False
+        thingspeak_post(ParkingLot.LotID, ParkingSpot.FloorID, ParkingLot.FloorSpots[ParkingSpot.FloorID - 1], ParkingSpot.SpotID, ParkingSpot.state, key)    
 
 
-    elif(IO.input(ParkingSpot.GPIOnum) == False):
-        if(ParkingSpot.state == False):
-            ParkingLot.FloorSpots[ParkingSpot.FloorID - 1] = ParkingLot.FloorSpots[ParkingSpot.FloorID - 1] - 1
-            ParkingSpot.state = True    
-            thingspeak_post(ParkingLot.LotID, ParkingSpot.FloorID, ParkingLot.FloorSpots[ParkingSpot.FloorID - 1], ParkingSpot.SpotID, ParkingSpot.state, "UPJ636UNXXEE2IIG")
+    elif(IO.input(ParkingSpot.GPIOnum) == False and ParkingSpot.state == False):
+        #if(ParkingSpot.state == False):
+        ParkingLot.spotTaken(ParkingSpot)
+        #ParkingLot.FloorSpots[ParkingSpot.FloorID - 1] = ParkingLot.FloorSpots[ParkingSpot.FloorID - 1] - 1
+        ParkingSpot.state = True    
+        thingspeak_post(ParkingLot.LotID, ParkingSpot.FloorID, ParkingLot.FloorSpots[ParkingSpot.FloorID - 1], ParkingSpot.SpotID, ParkingSpot.state, key)
 
 # IO init
 
