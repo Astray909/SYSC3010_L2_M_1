@@ -72,8 +72,8 @@ def stopCam():
 
 def writeToTS():
     # print("Camera On")
-    now = datetime.now()
-    current_time = now.strftime("%H:%M:%S")
+    now = datetime.now().replace(microsecond=0)
+    current_time = now
 
     plateNo = read_plate()
 

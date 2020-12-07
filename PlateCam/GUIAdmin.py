@@ -22,6 +22,8 @@ def openGate():
 def closeGate():
     print("wrote NO to field 3, gate will now close")
     writeTS("Gate Close Override", "", "NO")
+    time.sleep(5)
+    writeTS("", "", "00")
 
 def display():
 
