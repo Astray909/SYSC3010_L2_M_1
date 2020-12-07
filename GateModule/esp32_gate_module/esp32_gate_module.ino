@@ -1,16 +1,16 @@
 /*///////////////////////////////////////////////////////////////////////////////
- * Author: Ezra Pierce
- * Course: SYSC 3010 (Fall 2020)
- * 
- * Code written for Gate Module of a parking lot monitoring system. Code is written using Arduino libraries
- * is running on a ESP32 Microcontroller. Main funcitonalities are:
- * 
- * - Check if there is a car at the gate via a sonar sensor
- * - Write to Thingspeak when there is a car
- * - Wait for confirmation via thingspeak to open gate
- * - Be able to run tests for all components, triggered by a button press
- * 
- *//////////////////////////////////////////////////////////////////////////////
+   Author: Ezra Pierce
+   Course: SYSC 3010 (Fall 2020)
+
+   Code written for Gate Module of a parking lot monitoring system. Code is written using Arduino libraries
+   is running on a ESP32 Microcontroller. Main funcitonalities are:
+
+   - Check if there is a car at the gate via a sonar sensor
+   - Write to Thingspeak when there is a car
+   - Wait for confirmation via thingspeak to open gate
+   - Be able to run tests for all components, triggered by a button press
+
+*//////////////////////////////////////////////////////////////////////////////
 
 
 // INCLUDE STATEMENTS
@@ -18,7 +18,6 @@
 #include "ArduinoJson.h"
 #include <Stepper.h>
 #include <HTTPClient.h>
-
 
 // MACRO DEFINITIONS
 #define TEST_PIN 19
@@ -35,9 +34,9 @@
 #define TEST3_PIN 33
 #define TEST4_PIN 32
 #define SSID "triplex09"
-#define PWD 00
+#define PWD "thisbetterwork2016"
 #define SERVER "api.thingspeak.com"
-#define THRESHOLD 200
+#define THRESHOLD 10
 #define TEST_LED 2
 
 // CONSTANTS
@@ -57,14 +56,14 @@ bool confirmationReceived;
 WiFiClient client;
 
 /*
- * Function to read distance from ultrasonic sensor.
- * Takes no arguments.
- * Returns integer.
- */
+   Function to read distance from ultrasonic sensor.
+   Takes no arguments.
+   Returns integer.
+*/
 
 int readFromSonar() {
   int distance;
-  long distance;
+  long duration;
   // Trigger sensor, according to read protocol
   digitalWrite(TRIG_PIN, LOW);
   delayMicroseconds(2);
@@ -74,40 +73,40 @@ int readFromSonar() {
   // read response
   duration = pulseIn(ECHO_PIN, HIGH);
   distance = duration * 0.034 / 2;
-  return distance
+  return distance;
 }
 
 /*
- * Function to turn stepper motor.
- * Takes integer argument 'steps', denoting which direction and how far to turn
- * returns nothing
- */
+   Function to turn stepper motor.
+   Takes integer argument 'steps', denoting which direction and how far to turn
+   returns nothing
+*/
 
 void spinMotor(int steps) {
   // Negative steps turns counter-clockwise, positive turns clockwise
-  if(steps > 0){
+  if (steps > 0) {
     Stepper motor = Stepper(64, MOTOR1, MOTOR2, MOTOR3, MOTOR4);
     motor.setSpeed(MOTOR_SPEED);
     motor.step(steps);
   } else {
-    Stepper motor = Stepper(64, MOTOR4, MOTOR3, MOTOR2, MOTOR1);
+    Stepper motor = Stepper(64, MOTOR1, MOTOR3, MOTOR2, MOTOR4);
     motor.setSpeed(MOTOR_SPEED);
-    motor.step(-1*steps);
+    motor.step(-1 * steps);
   }
   Serial.println("Motor done.");
 }
 
 /*
- * Interrupt to alert program that a test has been requested.
- */
+   Interrupt to alert program that a test has been requested.
+*/
 void IRAM_ATTR test_isr() {
   testRequested = true;
   Serial.println("ISR");
 }
 
 /*
- * Setup function, runs once on boot.
- */
+   Setup function, runs once on boot.
+*/
 void setup() {
 
   // Configuring GPIO pins
@@ -123,13 +122,13 @@ void setup() {
   digitalWrite(TEST4_PIN, LOW);
   pinMode(TRIG_PIN, OUTPUT);
   pinMode(ECHO_PIN, INPUT);
-  
+
   // Configuring test ISR
   attachInterrupt(TEST_PIN, test_isr, FALLING);
-  
+
   // Open serial communication
   Serial.begin(115200);
-  
+
   // Configure network
   WiFi.begin(SSID, PWD);
   while (WiFi.status() != WL_CONNECTED)
@@ -142,22 +141,22 @@ void setup() {
 
 void test() {
   /*
-   * Testing module, triggered by button press.
-   * All results will be logged to thingspeak in a 4bit value with
-   * Bit0: Sonar test
-   * Bit1: Motor test
-   * Bit2: Write test
-   * Bit3: Read test
-   * 
-   * Value 15 denotes all tests passing.
-   * 
-   * Test must be setup with motor 10cm away from sonar module.
-   */
+     Testing module, triggered by button press.
+     All results will be logged to thingspeak in a 4bit value with
+     Bit0: Sonar test
+     Bit1: Motor test
+     Bit2: Write test
+     Bit3: Read test
+
+     Value 15 denotes all tests passing.
+
+     Test must be setup with motor 10cm away from sonar module.
+  */
   bool sonarPassed, motorPassed, writePassed, readPassed;
   int distance;
-  
+
   digitalWrite(TEST_LED, HIGH);
-  
+
   // Test One - Sonar
   distance = readFromSonar();
   if ((TEST_DISTANCE - 1) < distance < TEST_DISTANCE + 1) {
@@ -168,7 +167,7 @@ void test() {
     Serial.println("Sonar test failed.");
     sonarPassed = false;
   }
-  
+
   // Test Two - Motor
   spinMotor(200);
   distance = readFromSonar();
@@ -196,7 +195,7 @@ void test() {
     Serial.println(httpResponseCode);
     writePassed = false;
   }
-  
+
   //Test 4 - Read
   HTTPClient http;
   String serverPath = "https://api.thingspeak.com/channels/1160863/fields/1/last.json?api_key=" + TEST_READ_API_KEY;
@@ -228,10 +227,10 @@ void test() {
 }
 
 /*
- * Writes to thingspeak channel.
- * Takes api key and field value as arguments
- * returs HTTP response
- */
+   Writes to thingspeak channel.
+   Takes api key and field value as arguments
+   returs HTTP response
+*/
 
 int writeToThingspeak(String apiKey, String fieldValue) {
   HTTPClient http;
@@ -246,23 +245,55 @@ int writeToThingspeak(String apiKey, String fieldValue) {
 
 // Infinite loop
 void loop() {
+  // GATE OVERRIDE
+  HTTPClient http;
+  String serverPath = "http://api.thingspeak.com/channels/1169779/fields/3/last.json?api_key=" + READ_API_KEY;
+  http.begin(serverPath.c_str());
+  httpResponseCode = http.GET();
+  // Check for errors
+  if (httpResponseCode < 400) {
+    String payload = http.getString();
+    Serial.println(payload);
+    StaticJsonDocument<300> JSONObj;
+    DeserializationError err = deserializeJson(JSONObj, payload);
+    if (err) {
+      Serial.println("Failed to parse.");
+      Serial.println(err.c_str());
+    } else {
+      String field = JSONObj["field3"]; // Read field containing pertinent info
+      if (field.equals("YES")) {
+        Serial.println("Gate override, opening gate.");
+        spinMotor(2000);
+      } else if (field.equals("NO")) {
+        Serial.println("Gate override, closing.");
+        spinMotor(-2000);
+      }
+      writeToThingspeak(WRITE_API_KEY, "&field3=00");
+    }
+  }
+
+
   int distance;
   if (testRequested) {
     test();
   }
   confirmationReceived = false;
   distance = readFromSonar();
+  Serial.println(distance);
 
   // Check if car is there
-  if (distance > THRESHOLD) {
+  if (distance < THRESHOLD) {
     // Write to Thingspeak channel
     httpResponseCode = writeToThingspeak(WRITE_API_KEY, "&field3=A1");
+
     // Connect to THingspeak
     HTTPClient http;
     String serverPath = "http://api.thingspeak.com/channels/1169779/fields/3/last.json?api_key=" + READ_API_KEY;
     http.begin(serverPath.c_str());
+
     // Wait for reply
-    while (!confirmationReceived) {
+    unsigned long startTime = millis();
+    while (!confirmationReceived && ((millis() - startTime) < 15000)) {
       httpResponseCode = http.GET();
       // Check for errors
       if (httpResponseCode < 400) {
@@ -278,9 +309,15 @@ void loop() {
         } else {
           String field = JSONObj["field3"]; // Read field containing pertinent info
           Serial.println(field);
-          if (field.equals("00") || field.equals("0")) {
+          if (field.equals("YES")) {
             Serial.println("Car confirmed, opening gate.");
-            spinMotor(100);
+            spinMotor(1000);
+            delay(3000);
+            spinMotor(-1000);
+            // writeToThingspeak(WRITE_API_KEY, "&field3=00");
+            confirmationReceived = true;
+          } else if (field.equals("NO")) {
+            Serial.println("Car not confirmed.");
             confirmationReceived = true;
           } else {
             Serial.print(".");
@@ -292,6 +329,6 @@ void loop() {
       }
     }
   }
-  delay(5000);
+  delay(6000);
 
 }
