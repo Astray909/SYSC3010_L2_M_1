@@ -76,8 +76,8 @@ def read_plate():
         camera.capture("plate.jpg")
 
         script_dir = os.path.dirname(__file__)  # <-- absolute dir the script is in
-        rel_path = "test.jpg"  # testing image
-        #rel_path = "plate.jpg"
+        #rel_path = "test.jpg"  # testing image
+        rel_path = "plate.jpg" #picture captured by PiCamera
         abs_file_path = os.path.join(
             script_dir, rel_path
         )  # combines file and directory
@@ -95,7 +95,7 @@ def read_plate():
             plateNo = results["results"][0]["plate"]
             print(plateNo)
             sense.set_pixels(green_arrow)  # signal the driver with green arrow
-            print(results["results"][0]["confidence"])
+            #print(results["results"][0]["confidence"])
         except:
             # sense.set_pixels(red_cross) #signal the driver with red cross
             plateNo = "error10086"  # returns an error code if no plate was found

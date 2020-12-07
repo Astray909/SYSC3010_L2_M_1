@@ -19,7 +19,7 @@ sense = SenseHat()
 if __name__ == "__main__":
     while True:
         gateStatus = read()  # constantly poll from TS channel for update
-        print(gateStatus)
+        #print(gateStatus)
         if gateStatus == "XX":
             exit()
         if (

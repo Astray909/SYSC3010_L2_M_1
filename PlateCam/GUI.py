@@ -7,13 +7,16 @@ import os
 from TS_Download import *
 import Tkinter as tk
 
+#set the default size for GUI window
 HEIGHT = 500
 WIDTH = 900
 
+#initialize GUI canvas
 root = tk.Tk()
 root.title("GUI")
 canvas = tk.Canvas(root, height=HEIGHT, width=WIDTH)
 canvas.pack()
+#set maximum recursion limit
 x=40000
 sys.setrecursionlimit(x)
 
@@ -29,6 +32,7 @@ def display(f1N, f2N):
     if floorID == str(2):
         floor2Num = str(readSpots(6))
 
+    #Label 1 region contains label, frame, and number plate confirmation
     platelabel = tk.Label(root, text="Please confirm your license plate: ")
     platelabel.place(relx=0.13, rely=0.1, relwidth=0.75, relheight=0.1)
     
@@ -42,6 +46,7 @@ def display(f1N, f2N):
     label2 = tk.Label(platef, text=plateNum)
     label2.place(relx=0.55, rely=0, relwidth=0.45, relheight=1)
 
+    #Label 2 region contains label, frame, and parking spots information
     spotsLabel = tk.Label(root, text="Availability information: ")
     spotsLabel.place(relx=0.13, rely=0.4, relwidth=0.75, relheight=0.1)
     
@@ -59,11 +64,13 @@ def display(f1N, f2N):
     label6 = tk.Label(plateframe3, text=spotInfo2)
     label6.place(relx=0, rely=0, relwidth=1, relheight=1)
 
+    #set GUI to be non resizable
     root.resizable(False, False)
+    #run the GUI recursively, update every second
     root.after(1000, display, floor1Num, floor2Num)
 
     root.mainloop()
 
 
 if __name__ == "__main__":
-    display(0,0)
+    display(0,0) #initialize GUI with 0 for parking spots

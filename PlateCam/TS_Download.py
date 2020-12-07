@@ -19,8 +19,8 @@ def retrieve():
         % (CHANNEL_ID, READ_API_KEY)
     )
 
-    response = conn.read()
-    print "http status code=%s" % (conn.getcode())
+    response = conn.read() #append JSON into response
+    #print "http status code=%s" % (conn.getcode()) #print a debug message
     data = json.loads(response)
     conn.close()
     return data
@@ -36,6 +36,7 @@ def readPlate():
     return data["field1"]
 
 
+#return a specific field
 def readSpots(config):
     fieldid = "field" + str(config)
     data = retrieve()

@@ -17,14 +17,13 @@ from Plate_Reading import *
 
 WRITE_API_KEY = WRITE_KEY()
 
-
 def writeTS(fieldOne, fieldTwo, fieldThree):
     fieldFour = readSpots(4)
     fieldFive = readSpots(5)
     fieldSix = readSpots(6)
     fieldSeven = readSpots(7)
     fieldEight = readSpots(8)
-    while True:
+    while True: #relays all existing fields and send them with the updated fields
         params = urllib.urlencode(
             {
                 "field1": fieldOne,
@@ -46,7 +45,7 @@ def writeTS(fieldOne, fieldTwo, fieldThree):
         try:
             conn.request("POST", "/update", params, headers)
             response = conn.getresponse()
-            print(response.status, response.reason)
+            #print(response.status, response.reason)
             data = response.read()
             conn.close()
         except:
