@@ -93,7 +93,7 @@ def date_time(dt):
 def date_entry(dtime):
     split_time = dtime.split(':')
     fixed_time = datetime.datetime.combine(datetime.date.today(),
-                                  datetime.time(int(split_time[0]), int(split_time[1]), int(split_time[2])))
+                                  datetime.time(int(float(split_time[0])), int(float(split_time[1])), int(float(split_time[2]))))
     return fixed_time
 
 #This function will take the entrytime from the database and compare that time to the current time to calculate how much the person owes
@@ -130,18 +130,17 @@ while True:
     TS = urllib.request.urlopen("https://api.thingspeak.com/channels/1169779/feeds.json?results=1")
     #signals LED that the connection was successful
     GPIO.output(led1, GPIO.HIGH)
-    time.sleep(3)
+    time.sleep(4)
     GPIO.output(led1, GPIO.LOW)
 
     response = TS.read()
     data=json.loads(response)
     
     #updates the amount owed for any cars that are currently parked in the lot
-    cursor.execute("""SELECT * from CarDosier""")
-    records = cursor.fetchall()
-    for row in records:
-        row[4] = calculate_amount(row[2])
-        print(row[4])
+    #cursor.execute("""SELECT * from CarDosier""")
+    #records = cursor.fetchall()
+    #for row in records:
+        #row[4] = calculate_amount(row[2])
         
     #checks for any feeds that have come up
     index = 0
@@ -154,53 +153,61 @@ while True:
         #this statement checks if the last few entry points fall within the 15 second window so we can track any new information
         if (0 <= interval <= 15):
             
-            print('Entries are within the time range')
-
+            print('Entries found')
+            
+            #Individually checks all entries 
+            plate_number = (data['feeds'][index]['field1'])
+            print(plate_number)
+            entry_time = (data['feeds'][index]['field2'])
+            print(entry_time)
+            door_status = (data['feeds'][index]['field3'])
+            print(door_status)
+            
             try:
-                #Individually checks all entries 
-                plate_number = (data['feeds'][index]['field1'])
-                entry_time = date_entry((data['feeds'][index]['field2']))
-                door_status = (data['feeds'][index]['field3'])
                 #inserts new car into database
-                cursor.execute('''INSERT INTO CarDosier VALUES (?, ?, '0', '0', '0')''' % (plate_number, entry_time));
+                cursor.execute('''INSERT INTO CarDosier (PlateNumber, EntryTime, ExitTime, hasPaid, Amount) VALUES (?, ?, '0', 0, 0)''', (plate_number, entry_time));
+                dbconnect.commit();
             except:
-                plate_number = None | ""
-                entry_time = None | ""
-                door_status = None | ""
-
-            if(door_status == "00"):
-                cursor.execute('''SELECT * FROM CarDosier''');
+                plate_number == None or ""
+                entry_time == None or ""
+                
+            try:
+                if(door_status == "00"):
+                    cursor.execute('''SELECT * FROM CarDosier''');
                 for row in cursor:
                    if(row['PlateNumber'] == plate_number):
                        if(row['hadPaid'] == '0'):
                            write_to_TS('NO');
                        if(row['hadPaid'] == '1'):
                             write_to_TS('YES');
-        
-            try:
-                #For the parking entries, I check the feeds list and pull the data from each field
-                lot_ID = (data['feeds'][index]['field4'])
-                floor_ID = (data['feeds'][index]['field5'])
-                floor_spots = (data['feeds'][index]['field6'])
-                spot_ID = (data['feeds'][index]['field7'])
-                state = (data['feeds'][index]['field8'])
-                cursor.execute('''insert into ParkingSheet (LotID, FloorID, FloorSpots, SpotID, Status) VALUES (%s, %s, %s, %s, %s)'''
-                        % (lot_ID, floor_ID, floor_spots, spot_ID, state));
             except:
-                lot_ID = None | ""
-                floor_ID = None | ""
-                floor_spots = None | ""
-                spot_ID = None | ""
-                state = None | ""
+                door_status = None or ""
+                
+            #For the parking entries, I check the feeds list and pull the data from each field
+            lot_ID = (data['feeds'][index]['field4'])
+            floor_ID = (data['feeds'][index]['field5'])
+            floor_spots = (data['feeds'][index]['field6'])
+            spot_ID = (data['feeds'][index]['field7'])
+            state = (data['feeds'][index]['field8'])
+            
+            try:
+                cursor.execute('''insert into ParkingSheet (LotID, FloorID, FloorSpots, SpotID, Status) VALUES (?, ?, ?, ?, ?)''',
+                        (lot_ID, floor_ID, floor_spots, spot_ID, state));
+                dbconnect.commit();
+            except:
+                lot_ID = None or ""
+                floor_ID = None or ""
+                floor_spots = None or ""
+                spot_ID = None or ""
+                state = None or ""
             
             #used in ensuring that the loop checks all entries in the feed
             index+=1
-            dbconnect.commit();
                         
     #signals the second LED that the information was correctly stored
     GPIO.output(led2,GPIO.HIGH)
-    time.sleep(3)
+    time.sleep(4)
     GPIO.output(led2, GPIO.LOW)
-    time.sleep(3)
+    time.sleep(4)
 
     TS.close()
