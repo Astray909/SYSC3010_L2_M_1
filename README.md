@@ -4,9 +4,9 @@
 ##### [Cameron Chunr](https://github.com/Cameron-chung)
 ##### [Justin Huang](https://github.com/Astray909)
 ##### [Ezra Pierce](https://github.com/ezrapierce000)
-## System Requirements
-##### 3 RaspberryPi SBC running python2 or python3
-##### 1 ESP32 Micro Controller
+## Computing hardware Requirements
+#### 3 RaspberryPi SBC running python2 or python3
+#### 1 ESP32 Micro Controller
 ## Hardware Requirements
 | Part Name     | Part Number   | Total Quantity| Unit Cost |
 | ------------- |:-------------| ------:| -----: |
