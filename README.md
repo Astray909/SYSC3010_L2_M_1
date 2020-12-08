@@ -21,3 +21,7 @@
 |sense HAT|	/	|1	|$48.95|
 ## Setup Instructions
 ## References
+##### [GPIO. (n.d.). Retrieved September 28, 2020](https://www.raspberrypi.org/documentation/usage/gpio/)
+##### [ULN2003 Seven Darlington Arrays. (n.d.). Retrieved September 28, 2020](https://www.st.com/en/interfaces-and-transceivers/uln2003.html)
+##### [28BYJ-48 - 5V Stepper Motor. (n.d.). Retrieved September 28, 2020](https://components101.com/motors/28byj-48-stepper-motor)
+##### [HC-SR404 Ultrasonic Sensor. (n.d.). Retrieved November 5, 2020](https://components101.com/ultrasonic-sensor-working-pinout-datasheet)
