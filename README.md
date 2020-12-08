@@ -20,6 +20,7 @@
 |Motor control board	|ULN2003APG |	1	|$3.29|
 |sense HAT|	/	|1	|$48.95|
 ## Setup Instructions
+##### Placeholder
 ## References
 ##### [GPIO. (n.d.). Retrieved September 28, 2020](https://www.raspberrypi.org/documentation/usage/gpio/)
 ##### [ULN2003 Seven Darlington Arrays. (n.d.). Retrieved September 28, 2020](https://www.st.com/en/interfaces-and-transceivers/uln2003.html)
