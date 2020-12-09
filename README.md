@@ -21,24 +21,24 @@
 |sense HAT|	/	|1	|$48.95|
 ## Setup Instructions
 ##### GUI initialize, License Plate Reader initialize
-#####   * Navigate to PlateCam folder, using command line, run python2 main.py
-#####   * In the same directory, open another terminal and run python2 GUI.py
-#####   * (Optional, for Admin GUI) In the same directory, open a third terminal and run python2 GUIAdmin.py
+* Navigate to PlateCam folder, using command line, run python2 main.py
+* In the same directory, open another terminal and run python2 GUI.py
+* (Optional, for Admin GUI) In the same directory, open a third terminal and run python2 GUIAdmin.py
 ##### Gate module initialize
-#####   * Edit file to contain: WiFi Network name, WiFi password, LotID
-#####   * Compile esp32_gate_module.ino using Arduino compiler
-#####   * Flash board with program, program will start running once flashed
-#####   * Open Serial monitor to read debug messages, if needed
+* Edit file to contain: WiFi Network name, WiFi password, LotID
+* Compile esp32_gate_module.ino using Arduino compiler
+* Flash board with program, program will start running once flashed
+* Open Serial monitor to read debug messages, if needed
 ##### IR sensors initialize
-#####   * All relevant files have been imported to the main file, running.py
-#####   * Unfortunately due to the nature of the IR sensors being wired in GPIO, all parking spots and lots must be hard-coded into the running.py file
-#####   * By simply running ‘running.py’ the initial vacancies for each floor will be sent to the ThingSpeak channel and polling the spots will begin
+* All relevant files have been imported to the main file, running.py
+* Unfortunately due to the nature of the IR sensors being wired in GPIO, all parking spots and lots must be hard-coded into the running.py file
+* By simply running ‘running.py’ the initial vacancies for each floor will be sent to the ThingSpeak channel and polling the spots will begin
 ##### Web server initialize
-#####   * Go to Web_RPi and download the api.py and parkinglot.db
-#####   * Edit api.py file to contain the Thingspeak Read and Write api keys
-#####   * Ensure that the parkinglot.db has no tables to ensure that when the api.py is used, it will add in the required tables into the parkinglot.db
-#####   * Connect the gpio pins, 4 & 17, on the Raspberry Pi to two led lights with resistance to ensure the LEDs do not burn out
-#####   * On console run python3 api.py and the reactive program will do all the work
+* Go to Web_RPi and download the api.py and parkinglot.db
+* Edit api.py file to contain the Thingspeak Read and Write api keys
+* Ensure that the parkinglot.db has no tables to ensure that when the api.py is used, it will add in the required tables into the parkinglot.db
+* Connect the gpio pins, 4 & 17, on the Raspberry Pi to two led lights with resistance to ensure the LEDs do not burn out
+* On console run python3 api.py and the reactive program will do all the work
 
 ## References
 ##### [GPIO. (n.d.). Retrieved September 28, 2020](https://www.raspberrypi.org/documentation/usage/gpio/)
